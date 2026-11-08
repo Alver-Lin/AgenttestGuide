@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <title>AgenttestGuide · 智能体</title>
+  <rect width="64" height="64" rx="16" fill="#1677ff"/>
+  <g transform="translate(8 8) scale(2)" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4" y="7" width="16" height="13" rx="3"/>
+    <path d="M12 3v4M1.5 12v3M22.5 12v3M9 16h6"/>
+    <circle cx="8.5" cy="12" r="1" fill="#fff" stroke="none"/>
+    <circle cx="15.5" cy="12" r="1" fill="#fff" stroke="none"/>
+    <circle cx="12" cy="3" r="1" fill="#fff" stroke="none"/>
+  </g>
+</svg>

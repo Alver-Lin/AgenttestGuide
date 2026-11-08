@@ -1,0 +1,14 @@
+node_modules/
+frontend/dist/
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.tsbuildinfo
+backend/data/
+/content/.agenttestguide/
+.DS_Store
+*.log
+.env
+
+.pnpm-store/
