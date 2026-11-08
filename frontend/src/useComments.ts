@@ -2,7 +2,7 @@ import { computed, nextTick, reactive, ref, watch } from 'vue'
 import type { ComputedRef, Ref } from 'vue'
 import { message, Modal } from 'ant-design-vue'
 import { api } from './types'
-import type { CommentDraft, Note, TextComment } from './types'
+import type { CommentDraft, Note, TextBookmark, TextComment } from './types'
 import { locateAnchor, paintHighlights, readSelectionAnchor } from './annotations'
 import type { AnchorRange, HighlightSpan } from './annotations'
 
@@ -10,6 +10,8 @@ export function useComments(
   file: ComputedRef<Note | undefined>,
   host: Ref<HTMLElement | undefined>,
   editing: Ref<boolean>,
+  bookmarks: ComputedRef<TextBookmark[]> = computed(() => []),
+  activeBookmarkId: Ref<string> = ref(''),
 ) {
   const open = ref(window.matchMedia('(min-width: 1200px)').matches)
   const activeId = ref('')
@@ -63,24 +65,31 @@ export function useComments(
     for (const comment of comments.value) {
       const range = locateAnchor(text, comment.anchor)
       located[comment.id] = range
-      if (range) spans.push({ ...range, id: comment.id })
+      if (range) spans.push({ ...range, id: comment.id, kind: 'comment' })
+    }
+    for (const bookmark of bookmarks.value) {
+      const range = locateAnchor(text, bookmark.anchor)
+      if (range) spans.push({ ...range, id: bookmark.id, kind: 'bookmark' })
     }
     if (draft.value) {
       const range = locateAnchor(text, draft.value.anchor)
-      if (range) spans.push({ ...range, id: '', draft: true })
+      if (range) spans.push({ ...range, id: '', draft: true, kind: 'comment' })
     }
     positions.value = located
-    paintHighlights(host.value, spans, activeId.value)
+    paintHighlights(host.value, spans, activeId.value, activeBookmarkId.value)
   }
 
-  function captureSelection() {
-    if (!file.value || !host.value || editing.value || busy.value) return
-    const anchor = readSelectionAnchor(host.value)
-    if (!anchor) return
+  function beginDraft(anchor = readSelectionAnchor(host.value!)) {
+    if (!file.value || !host.value || editing.value || busy.value || !anchor) return false
     const previous = drafts[file.value.id]
     drafts[file.value.id] = { anchor, body: previous?.editingId ? '' : previous?.body || '' }
     activeId.value = ''
     open.value = true
+    return true
+  }
+
+  function captureSelection() {
+    beginDraft()
   }
 
   function updateBody(body: string) {
@@ -178,16 +187,22 @@ export function useComments(
   }
 
   function onHighlightClick(event: MouseEvent) {
-    const target = (event.target as Element).closest<HTMLElement>('mark[data-comment-ids]')
-    const id = target?.dataset.commentIds
+    const target = (event.target as Element).closest<HTMLElement>('mark[data-annotation]')
+    if (!target || !host.value?.contains(target) || !window.getSelection()?.isCollapsed) return null
+    const commentId = target.dataset.commentIds
       ?.split(' ')
       .find((value) => comments.value.some((comment) => comment.id === value))
-    if (!id || !host.value?.contains(target || null) || !window.getSelection()?.isCollapsed)
-      return false
+    const bookmarkId = target.dataset.bookmarkIds
+      ?.split(' ')
+      .find((value) => bookmarks.value.some((bookmark) => bookmark.id === value))
+    if (!commentId && !bookmarkId) return null
     event.preventDefault()
-    activeId.value = id
-    open.value = true
-    return true
+    if (commentId) {
+      activeId.value = commentId
+      open.value = true
+      return { type: 'comment' as const, id: commentId }
+    }
+    return { type: 'bookmark' as const, id: bookmarkId! }
   }
 
   watch(
@@ -200,7 +215,16 @@ export function useComments(
     { immediate: true },
   )
   watch(
-    [host, () => file.value?.content, comments, () => draft.value?.anchor, activeId, editing],
+    [
+      host,
+      () => file.value?.content,
+      comments,
+      bookmarks,
+      () => draft.value?.anchor,
+      activeId,
+      activeBookmarkId,
+      editing,
+    ],
     () => void paint(),
     { flush: 'post' },
   )
@@ -216,6 +240,8 @@ export function useComments(
     unlocated,
     hasDrafts,
     reload,
+    paint,
+    beginDraft,
     captureSelection,
     updateBody,
     cancelDraft,

@@ -1,10 +1,6 @@
 # Al Agent 开发岗 求职必备 Agent 面试题库
 
 把 Agent 聊透，面试官问不倒 
-
-![](images/5c79dcb12be4255965c7b4791c58d664af6dc4a1413cfd99ae19f5cdb9f2f280.jpg)
-
-
 ## 目录
 
 第零章 认知篇：Agent 面试到底考什么

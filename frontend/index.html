@@ -10,6 +10,17 @@
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=agent-b" />
     <title>AgenttestGuide · Agent 评测知识笔记</title>
+    <script>
+      ;(function () {
+        try {
+          var stored = localStorage.getItem('agenttestguide-theme')
+          var dark =
+            stored === 'dark' ||
+            (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+        } catch (e) {}
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>

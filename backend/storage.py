@@ -434,6 +434,7 @@ class MarkdownStore:
                     raise StorageError(409, "仅可永久删除回收站中的文件")
                 source.unlink()
                 self.comment_path(note_id).unlink(missing_ok=True)
+                self.bookmark_path(note_id).unlink(missing_ok=True)
                 if item.get("asset_dir"):
                     assets = self.path(item["asset_dir"])
                     if assets.name == note_id and assets.parent.name == "_assets" and assets.is_dir():
@@ -471,6 +472,9 @@ class MarkdownStore:
 
     def comment_path(self, note_id):
         return self.path(f".agenttestguide/comments/{note_id}.json")
+
+    def bookmark_path(self, note_id):
+        return self.path(f".agenttestguide/bookmarks/{note_id}.json")
 
     def import_document(self, notebook_id, title, content, *, job_id, assets=None, source=None, filename="", url=""):
         from .mineru import IMAGES, rewrite_links
@@ -644,7 +648,7 @@ class MarkdownStore:
     def require_editable_note(self, note_id):
         item = self.note(note_id)
         if item.get("deleted_at"):
-            raise StorageError(409, "请先恢复文件再修改评论")
+            raise StorageError(409, "请先恢复文件再修改")
 
     def list_comments(self, note_id):
         with self.transaction():
@@ -682,3 +686,63 @@ class MarkdownStore:
             if len(remaining) == len(comments):
                 raise StorageError(404, "评论不存在")
             self.write_comments(note_id, remaining)
+
+    def read_bookmarks(self, note_id):
+        path = self.bookmark_path(note_id)
+        if not path.exists():
+            return []
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            if not isinstance(data, dict) or data.get("version") != 1 or not isinstance(data.get("bookmarks"), list):
+                raise ValueError("invalid bookmark data")
+            if any(not isinstance(item, dict) or not isinstance(item.get("id"), str)
+                   or not isinstance(item.get("anchor"), dict)
+                   for item in data["bookmarks"]):
+                raise ValueError("invalid bookmark record")
+            return data["bookmarks"]
+        except (ValueError, TypeError):
+            raise StorageError(409, "书签文件无法读取，请检查文件内容，原文件未被覆盖")
+
+    def write_bookmarks(self, note_id, bookmarks):
+        path = self.bookmark_path(note_id)
+        path.parent.mkdir(exist_ok=True)
+        atomic_write(path, json.dumps({"version": 1, "note_id": note_id, "bookmarks": bookmarks}, ensure_ascii=False, indent=2).encode("utf-8"))
+
+    def list_bookmarks(self, note_id):
+        with self.transaction():
+            self.note(note_id)
+            return self.read_bookmarks(note_id)
+
+    def create_bookmark(self, note_id, payload):
+        with self.transaction():
+            self.require_editable_note(note_id)
+            bookmarks = self.read_bookmarks(note_id)
+            if len(bookmarks) >= 500:
+                raise StorageError(409, "单篇文档最多保存 500 个书签")
+            quote = payload["anchor"]["quote"].strip()
+            title = (payload.get("title") or quote[:40]).strip() or quote[:40]
+            bookmark = {"id": str(uuid.uuid4()), "note_id": note_id, "title": title,
+                        "anchor": payload["anchor"], "created_at": now(), "updated_at": now()}
+            bookmarks.append(bookmark)
+            self.write_bookmarks(note_id, bookmarks)
+            return bookmark
+
+    def update_bookmark(self, note_id, bookmark_id, title):
+        with self.transaction():
+            self.require_editable_note(note_id)
+            bookmarks = self.read_bookmarks(note_id)
+            bookmark = next((item for item in bookmarks if item["id"] == bookmark_id), None)
+            if bookmark is None:
+                raise StorageError(404, "书签不存在")
+            bookmark.update(title=title, updated_at=now())
+            self.write_bookmarks(note_id, bookmarks)
+            return bookmark
+
+    def delete_bookmark(self, note_id, bookmark_id):
+        with self.transaction():
+            self.require_editable_note(note_id)
+            bookmarks = self.read_bookmarks(note_id)
+            remaining = [item for item in bookmarks if item["id"] != bookmark_id]
+            if len(remaining) == len(bookmarks):
+                raise StorageError(404, "书签不存在")
+            self.write_bookmarks(note_id, remaining)

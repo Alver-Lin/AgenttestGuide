@@ -64,14 +64,12 @@ function timeLabel(value: string) {
   <aside class="comments-panel" aria-label="文档注释">
     <header class="comments-heading">
       <div>
-        <MessageSquareText :size="18" /><strong>注释</strong
-        ><span class="comments-count">{{ comments.length }}</span>
+        <MessageSquareText :size="18" /><strong>注释</strong>
       </div>
       <button class="icon-button" aria-label="关闭注释栏" @click="emit('close')">
         <X :size="18" />
       </button>
     </header>
-    <p class="comments-tip"><span class="yellow-dot"></span>选中正文中的文字，添加注释并标黄</p>
     <div v-if="error" class="comments-error">
       <CircleAlert :size="14" /><span>{{ error }}</span
       ><button @click="emit('retry')">重试</button>
@@ -119,10 +117,8 @@ function timeLabel(value: string) {
         </button>
         <p class="comment-body">{{ comment.body }}</p>
         <div class="comment-card-bottom">
-          <time>{{ timeLabel(comment.updated_at) }}</time
-          ><button @click="emit('select', comment.id)">
-            {{ unlocated.includes(comment.id) ? '原文已修改' : '定位原文' }}
-          </button>
+          <time>{{ timeLabel(comment.updated_at) }}</time>
+          <span v-if="unlocated.includes(comment.id)" class="comment-unlocated">原文已修改</span>
         </div>
       </article>
     </div>
@@ -162,9 +158,9 @@ function timeLabel(value: string) {
       </div>
     </form>
     <div v-else class="comments-footer">
-      <TextSelect :size="14" />{{
-        editing ? '切换到阅读模式后可选中文字' : '选中文字即可添加新的注释'
-      }}
+      <TextSelect :size="13" /><span>{{
+        editing ? '切换到阅读模式后可选中文字' : '选中文字后点击「注释」即可添加'
+      }}</span>
     </div>
   </aside>
 </template>

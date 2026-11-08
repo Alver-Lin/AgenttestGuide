@@ -149,6 +149,27 @@ class CommentCreate(CommentBody):
     anchor: CommentAnchor
 
 
+class BookmarkCreate(BaseModel):
+    anchor: CommentAnchor
+    title: str = Field(default="", max_length=80)
+
+    @field_validator("title")
+    @classmethod
+    def clean_title(cls, value):
+        return value.strip()
+
+
+class BookmarkBody(BaseModel):
+    title: str = Field(min_length=1, max_length=80)
+
+    @field_validator("title")
+    @classmethod
+    def clean_title(cls, value):
+        if not value.strip():
+            raise ValueError("书签名称不能为空")
+        return value.strip()
+
+
 @app.get("/api/health")
 def health():
     return {"status": "ok", "storage": "markdown"}
@@ -250,6 +271,27 @@ def update_comment(note_id: str, comment_id: str, payload: CommentBody):
 @app.delete("/api/notes/{note_id}/comments/{comment_id}", status_code=204)
 def delete_comment(note_id: str, comment_id: str):
     store.delete_comment(note_id, comment_id)
+    return Response(status_code=204)
+
+
+@app.get("/api/notes/{note_id}/bookmarks")
+def list_bookmarks(note_id: str):
+    return store.list_bookmarks(note_id)
+
+
+@app.post("/api/notes/{note_id}/bookmarks", status_code=201)
+def create_bookmark(note_id: str, payload: BookmarkCreate):
+    return store.create_bookmark(note_id, payload.model_dump())
+
+
+@app.patch("/api/notes/{note_id}/bookmarks/{bookmark_id}")
+def update_bookmark(note_id: str, bookmark_id: str, payload: BookmarkBody):
+    return store.update_bookmark(note_id, bookmark_id, payload.title)
+
+
+@app.delete("/api/notes/{note_id}/bookmarks/{bookmark_id}", status_code=204)
+def delete_bookmark(note_id: str, bookmark_id: str):
+    store.delete_bookmark(note_id, bookmark_id)
     return Response(status_code=204)
 
 

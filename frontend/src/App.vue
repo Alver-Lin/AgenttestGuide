@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, h, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
-import { message, Modal } from 'ant-design-vue'
+import { computed, h, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { message, Modal, theme as antTheme } from 'ant-design-vue'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import {
   Folder,
@@ -27,29 +27,59 @@ import {
   ImagePlus,
   X,
   MessageSquareText,
+  Bookmark,
   Upload as ImportIcon,
+  Moon,
+  Sun,
 } from 'lucide-vue-next'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { useFiles } from './useFiles'
 import { useComments } from './useComments'
+import { useBookmarks } from './useBookmarks'
 import { useEditorImages } from './useEditorImages'
 import { markdownImageUrl } from './markdownImages'
+import { locateAnchor, readSelectionAnchor, selectionRect } from './annotations'
 import CommentsPanel from './CommentsPanel.vue'
+import BookmarksPanel from './BookmarksPanel.vue'
 import ImportDialog from './ImportDialog.vue'
-import type { Note } from './types'
+import type { Note, TextAnchor } from './types'
 
-const theme = {
+const THEME_KEY = 'agenttestguide-theme'
+
+function readStoredTheme(): boolean {
+  const stored = localStorage.getItem(THEME_KEY)
+  if (stored === 'dark') return true
+  if (stored === 'light') return false
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+}
+
+const isDark = ref(readStoredTheme())
+const theme = computed(() => ({
+  algorithm: isDark.value ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
   token: {
-    colorPrimary: '#1677ff',
-    colorInfo: '#1677ff',
+    colorPrimary: isDark.value ? '#3c8cff' : '#1677ff',
+    colorInfo: isDark.value ? '#3c8cff' : '#1677ff',
     borderRadius: 6,
-    colorText: '#262626',
-    colorBorder: '#d9d9d9',
+    colorText: isDark.value ? '#e8e8e8' : '#262626',
+    colorBorder: isDark.value ? '#424242' : '#d9d9d9',
+    colorBgContainer: isDark.value ? '#141414' : '#ffffff',
+    colorBgElevated: isDark.value ? '#1f1f1f' : '#ffffff',
     fontFamily:
       '-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif',
   },
+}))
+
+function applyTheme(dark: boolean) {
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+  localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light')
 }
+
+function toggleTheme() {
+  isDark.value = !isDark.value
+}
+
+watch(isDark, applyTheme, { immediate: true })
 const {
   folders,
   activeFiles,
@@ -122,6 +152,22 @@ const treeData = computed(() =>
       })),
   })),
 )
+const outlineOpen = ref(false)
+const outline = computed(() => {
+  const items: { id: string; level: number; text: string }[] = []
+  const content = current.value?.content || ''
+  let index = 0
+  for (const match of content.matchAll(/^(#{1,3})\s+(.+)$/gm)) {
+    const text = match[2]
+      .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .replace(/[*_`~]+/g, '')
+      .trim()
+    if (!text) continue
+    items.push({ id: `heading-${index++}`, level: match[1].length, text })
+  }
+  return items
+})
 const rendered = computed(() => {
   const html = DOMPurify.sanitize(
     marked.parse(current.value?.content || '', { gfm: true }) as string,
@@ -134,8 +180,24 @@ const rendered = computed(() => {
     image.setAttribute('src', markdownImageUrl(id, source))
     image.setAttribute('data-image-source', source)
   }
+  let index = 0
+  for (const heading of document.querySelectorAll('h1, h2, h3')) {
+    heading.id = `heading-${index++}`
+  }
   return document.body.innerHTML
 })
+const {
+  open: bookmarksOpen,
+  activeId: activeBookmarkId,
+  bookmarks,
+  loading: bookmarksLoading,
+  busy: bookmarksBusy,
+  error: bookmarksError,
+  reload: reloadBookmarks,
+  add: addBookmark,
+  rename: renameBookmark,
+  remove: removeBookmark,
+} = useBookmarks(current, editing)
 const {
   open: commentsOpen,
   activeId: activeCommentId,
@@ -147,7 +209,8 @@ const {
   unlocated: unlocatedComments,
   hasDrafts: hasCommentDrafts,
   reload: reloadComments,
-  captureSelection,
+  paint: paintAnnotations,
+  beginDraft,
   updateBody: updateCommentBody,
   cancelDraft: cancelComment,
   submit: submitComment,
@@ -155,7 +218,18 @@ const {
   deleteComment,
   jumpToComment,
   onHighlightClick,
-} = useComments(current, markdownBody, editing)
+} = useComments(current, markdownBody, editing, bookmarks, activeBookmarkId)
+const selectionMenu = ref<{ anchor: TextAnchor; left: number; top: number } | null>(null)
+watch(editing, (value) => {
+  if (value) selectionMenu.value = null
+})
+const unlocatedBookmarks = computed(() => {
+  if (!markdownBody.value || editing.value) return [] as string[]
+  const text = markdownBody.value.textContent || ''
+  return bookmarks.value
+    .filter((bookmark) => !locateAnchor(text, bookmark.anchor))
+    .map((bookmark) => bookmark.id)
+})
 const characterCount = computed(
   () => current.value?.content.replace(/[#*`>\[\]()\-\s]/g, '').length || 0,
 )
@@ -197,7 +271,21 @@ function selectNode(keys: (string | number)[], closeSidebar = true) {
     if (!expandedKeys.value.includes(key)) expandedKeys.value.push(key)
   }
   editing.value = false
+  outlineOpen.value = false
+  selectionMenu.value = null
   nextTick(() => scroller.value?.scrollTo({ top: 0 }))
+}
+
+function toggleOutline() {
+  outlineOpen.value = !outlineOpen.value
+}
+
+function jumpToHeading(id: string) {
+  if (editing.value) editing.value = false
+  nextTick(() => {
+    const target = scroller.value?.querySelector(`#${CSS.escape(id)}`)
+    target?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  })
 }
 
 function onTreeSelect(keys: (string | number)[]) {
@@ -251,7 +339,7 @@ function confirmDelete(kind: 'folder' | 'file', id: string) {
     content:
       kind === 'folder'
         ? `文件夹${count ? `及其中的 ${count} 个文件` : ''}将移入回收目录，删除后可点击“撤销”恢复。`
-        : '文件和已保存的注释将保留在回收目录，删除后可点击“撤销”恢复。',
+        : '文件和已保存的注释、书签将保留在回收目录，删除后可点击“撤销”恢复。',
     okText: '确认删除',
     okType: 'danger',
     cancelText: '取消',
@@ -389,7 +477,11 @@ function onKey(event: KeyboardEvent) {
     event.preventDefault()
     void saveAll()
   }
-  if (event.key === 'Escape') mobileSidebar.value = false
+  if (event.key === 'Escape') {
+    mobileSidebar.value = false
+    outlineOpen.value = false
+    clearSelectionMenu()
+  }
 }
 function beforeUnload(event: BeforeUnloadEvent) {
   if (pendingCount.value || hasCommentDrafts.value || imageUploading.value) {
@@ -407,8 +499,91 @@ function onLink(event: MouseEvent) {
     link.rel = 'noopener noreferrer'
   }
 }
+function clearSelectionMenu() {
+  selectionMenu.value = null
+}
+
+function updateSelectionMenu() {
+  if (!markdownBody.value || editing.value || commentsBusy.value || bookmarksBusy.value) {
+    clearSelectionMenu()
+    return
+  }
+  const anchor = readSelectionAnchor(markdownBody.value)
+  const rect = selectionRect(markdownBody.value)
+  const reader = markdownBody.value.closest('.document-reader') as HTMLElement | null
+  if (!anchor || !rect || !reader) {
+    clearSelectionMenu()
+    return
+  }
+  const bounds = reader.getBoundingClientRect()
+  selectionMenu.value = {
+    anchor,
+    left: Math.min(Math.max(rect.left - bounds.left + rect.width / 2, 72), bounds.width - 72),
+    top: Math.min(rect.bottom - bounds.top + 10, bounds.height - 48),
+  }
+}
+
+function openCommentsPanel() {
+  bookmarksOpen.value = false
+  clearSelectionMenu()
+  commentsOpen.value = !commentsOpen.value
+}
+
+function openBookmarksPanel() {
+  commentsOpen.value = false
+  clearSelectionMenu()
+  bookmarksOpen.value = !bookmarksOpen.value
+}
+
+async function addBookmarkFromSelection() {
+  if (!selectionMenu.value) return
+  const anchor = selectionMenu.value.anchor
+  clearSelectionMenu()
+  window.getSelection()?.removeAllRanges()
+  commentsOpen.value = false
+  await addBookmark(anchor)
+}
+
+function addCommentFromSelection() {
+  if (!selectionMenu.value) return
+  const anchor = selectionMenu.value.anchor
+  clearSelectionMenu()
+  bookmarksOpen.value = false
+  beginDraft(anchor)
+}
+
+async function jumpToBookmark(id: string) {
+  commentsOpen.value = false
+  bookmarksOpen.value = true
+  editing.value = false
+  activeBookmarkId.value = id
+  await paintAnnotations()
+  const mark = [
+    ...(markdownBody.value?.querySelectorAll<HTMLElement>('mark[data-bookmark-ids]') || []),
+  ].find((element) => element.dataset.bookmarkIds?.split(' ').includes(id))
+  if (mark) mark.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  else message.info('被标记的原文已修改，暂时无法定位。')
+}
+
+async function openComment(id: string) {
+  bookmarksOpen.value = false
+  await jumpToComment(id)
+}
+
 function onMarkdownClick(event: MouseEvent) {
-  if (!onHighlightClick(event)) onLink(event)
+  const hit = onHighlightClick(event)
+  if (!hit) {
+    onLink(event)
+    return
+  }
+  clearSelectionMenu()
+  if (hit.type === 'bookmark') {
+    commentsOpen.value = false
+    bookmarksOpen.value = true
+    activeBookmarkId.value = hit.id
+  } else {
+    bookmarksOpen.value = false
+  }
 }
 function onMarkdownImageError(event: Event) {
   const image = event.target
@@ -523,43 +698,102 @@ onBeforeUnmount(() => {
             还没有文件夹<button @click="openCreate('folder')">创建文件夹</button>
           </div>
         </div>
+        <footer class="sidebar-footer">
+          <a-tooltip title="收起文件栏"
+            ><button
+              class="icon-button sidebar-collapse"
+              aria-label="收起文件栏"
+              @click="toggleSidebar"
+            >
+              <PanelLeftClose :size="18" /></button
+          ></a-tooltip>
+        </footer>
       </aside>
       <main class="document-pane">
         <header class="document-header">
           <div class="document-path">
             <button
-              class="icon-button sidebar-toggle"
-              :aria-label="sidebarHidden ? '显示文件栏' : '切换文件栏'"
+              class="icon-button sidebar-toggle sidebar-reopen"
+              aria-label="显示文件栏"
               @click="toggleSidebar"
             >
-              <PanelLeftOpen v-if="sidebarHidden" :size="18" /><PanelLeftClose
-                v-else
-                :size="18"
-              /></button
-            ><template v-if="current"
+              <PanelLeftOpen :size="18" />
+            </button>
+            <a-tooltip v-if="current" title="目录"
+              ><button
+                class="icon-button outline-toggle"
+                :class="{ active: outlineOpen }"
+                aria-label="目录"
+                :aria-expanded="outlineOpen"
+                @click="toggleOutline"
+              >
+                <List :size="17" /></button
+            ></a-tooltip>
+            <template v-if="current"
               ><span class="path-folder">{{ currentFolder?.name }}</span
               ><ChevronRight :size="15" /><span class="path-file">{{
                 current.title
               }}</span></template
             ><span v-else class="path-file">{{ targetFolder?.name || '文件' }}</span>
           </div>
-          <div v-if="current" class="document-header-actions">
-            <div class="view-switch">
-              <button :class="{ active: !editing }" @click="editing = false">
-                <Eye :size="16" />阅读</button
-              ><button :class="{ active: editing }" @click="editing = true">
-                <PenLine :size="16" />编辑
-              </button>
-            </div>
-            <button
-              :class="['comments-toggle', { active: commentsOpen }]"
-              @click="commentsOpen = !commentsOpen"
-              :aria-expanded="commentsOpen"
-            >
-              <MessageSquareText :size="16" />注释<span v-if="comments.length">{{
-                comments.length
-              }}</span>
-            </button>
+          <div class="document-header-actions">
+            <a-tooltip :title="isDark ? '浅色模式' : '深色模式'"
+              ><button
+                class="icon-button theme-toggle"
+                :aria-label="isDark ? '切换到浅色模式' : '切换到深色模式'"
+                @click="toggleTheme"
+              >
+                <Sun v-if="isDark" :size="17" /><Moon v-else :size="17" /></button
+            ></a-tooltip>
+            <template v-if="current">
+              <a-tooltip title="阅读"
+                ><button
+                  class="icon-button"
+                  :class="{ active: !editing }"
+                  aria-label="阅读"
+                  @click="editing = false"
+                >
+                  <Eye :size="17" /></button></a-tooltip
+              ><a-tooltip title="编辑"
+                ><button
+                  class="icon-button"
+                  :class="{ active: editing }"
+                  aria-label="编辑"
+                  @click="editing = true"
+                >
+                  <PenLine :size="17" /></button
+              ></a-tooltip>
+              <a-tooltip title="书签"
+                ><button
+                  class="icon-button comments-toggle"
+                  :class="{ active: bookmarksOpen }"
+                  aria-label="书签"
+                  :aria-expanded="bookmarksOpen"
+                  @click="openBookmarksPanel"
+                >
+                  <Bookmark :size="17" /><span
+                    v-if="bookmarks.length"
+                    class="comments-badge"
+                    >{{ bookmarks.length }}</span
+                  >
+                </button></a-tooltip
+              >
+              <a-tooltip title="注释"
+                ><button
+                  class="icon-button comments-toggle"
+                  :class="{ active: commentsOpen }"
+                  aria-label="注释"
+                  :aria-expanded="commentsOpen"
+                  @click="openCommentsPanel"
+                >
+                  <MessageSquareText :size="17" /><span
+                    v-if="comments.length"
+                    class="comments-badge"
+                    >{{ comments.length }}</span
+                  >
+                </button></a-tooltip
+              >
+            </template>
           </div>
         </header>
         <div v-if="loading" class="center-state">
@@ -580,7 +814,44 @@ onBeforeUnmount(() => {
           </div>
           <template v-if="current">
             <div class="document-workspace">
+              <aside v-if="outlineOpen" class="outline-panel" aria-label="目录">
+                <header class="outline-heading">
+                  <div>
+                    <List :size="16" /><strong>目录</strong>
+                  </div>
+                </header>
+                <nav class="outline-list">
+                  <button class="outline-item level-0" @click="jumpToHeading('document-title')">
+                    {{ current.title }}
+                  </button>
+                  <button
+                    v-for="item in outline"
+                    :key="item.id"
+                    :class="['outline-item', `level-${item.level}`]"
+                    :title="item.text"
+                    @click="jumpToHeading(item.id)"
+                  >
+                    {{ item.text }}
+                  </button>
+                  <p v-if="!outline.length" class="outline-empty">正文中还没有标题</p>
+                </nav>
+              </aside>
               <div class="document-reader">
+                <div
+                  v-if="selectionMenu && !editing"
+                  class="selection-toolbar"
+                  :style="{ left: `${selectionMenu.left}px`, top: `${selectionMenu.top}px` }"
+                  role="toolbar"
+                  aria-label="选区操作"
+                  @mousedown.prevent
+                >
+                  <button type="button" @click="addBookmarkFromSelection">
+                    <Bookmark :size="14" />书签
+                  </button>
+                  <button type="button" @click="addCommentFromSelection">
+                    <MessageSquareText :size="14" />注释
+                  </button>
+                </div>
                 <div ref="scroller" class="document-scroll">
                   <article class="document-content" :class="{ 'is-editing': editing }">
                     <input
@@ -591,7 +862,7 @@ onBeforeUnmount(() => {
                       maxlength="200"
                       @input="updateTitle"
                     />
-                    <h1 v-else class="document-title">{{ current.title }}</h1>
+                    <h1 v-else id="document-title" class="document-title">{{ current.title }}</h1>
                     <p class="document-date">{{ formatDate(current.updated_at) }} 更新</p>
                     <div
                       v-if="editing"
@@ -667,8 +938,8 @@ onBeforeUnmount(() => {
                       ref="markdownBody"
                       class="markdown-body"
                       v-html="rendered"
-                      @mouseup="captureSelection"
-                      @keyup="captureSelection"
+                      @mouseup="updateSelectionMenu"
+                      @keyup="updateSelectionMenu"
                       @click="onMarkdownClick"
                       @error.capture="onMarkdownImageError"
                     ></div>
@@ -683,7 +954,7 @@ onBeforeUnmount(() => {
                     ><LoaderCircle v-if="saving" class="spin" :size="13" /><CircleAlert
                       v-else-if="saveError"
                       :size="13"
-                    /><CheckCheck v-else :size="14" />{{
+                    /><CheckCheck v-else :size="13" /><span>{{
                       saving
                         ? '正在保存…'
                         : saveError
@@ -691,17 +962,33 @@ onBeforeUnmount(() => {
                           : pendingCount
                             ? '等待保存…'
                             : '已保存'
-                    }}</span
-                  ><span
-                    >{{ characterCount.toLocaleString() }} 字符<span class="footer-divider"></span
+                    }}</span></span
+                  ><span class="footer-meta"
+                    ><span>{{ characterCount.toLocaleString() }} 字符</span
+                    ><span class="footer-divider" aria-hidden="true"></span
                     ><span :title="current.path ? `content/${current.path}` : 'Markdown 文件'"
                       >Markdown 文件</span
                     ></span
                   >
                 </footer>
               </div>
+              <BookmarksPanel
+                v-if="bookmarksOpen"
+                :bookmarks="bookmarks"
+                :active-id="activeBookmarkId"
+                :loading="bookmarksLoading"
+                :busy="bookmarksBusy"
+                :error="bookmarksError"
+                :unlocated="unlocatedBookmarks"
+                :editing="editing"
+                @close="bookmarksOpen = false"
+                @select="jumpToBookmark"
+                @rename="renameBookmark"
+                @remove="removeBookmark"
+                @retry="reloadBookmarks()"
+              />
               <CommentsPanel
-                v-if="commentsOpen"
+                v-else-if="commentsOpen"
                 :comments="comments"
                 :draft="commentDraft"
                 :active-id="activeCommentId"
@@ -711,7 +998,7 @@ onBeforeUnmount(() => {
                 :unlocated="unlocatedComments"
                 :editing="editing"
                 @close="commentsOpen = false"
-                @select="jumpToComment"
+                @select="openComment"
                 @edit="editComment"
                 @remove="deleteComment"
                 @update-body="updateCommentBody"

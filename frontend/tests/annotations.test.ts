@@ -57,7 +57,9 @@ test('overlapping comments retain both IDs without nested highlights', () => {
     { id: 'second', start: 5, end: 10 },
   ])
   assert.deepEqual(
-    segments.filter((part) => part.ids.length).map((part) => [part.start, part.end, part.ids]),
+    segments
+      .filter((part) => part.commentIds.length)
+      .map((part) => [part.start, part.end, part.commentIds]),
     [
       [2, 5, ['first']],
       [5, 8, ['first', 'second']],
@@ -77,6 +79,20 @@ test('draft ranges can be painted alongside saved comments', () => {
   ])
   assert.deepEqual(
     segments.find((part) => part.start === 3),
-    { start: 3, end: 4, ids: ['saved'], draft: true },
+    { start: 3, end: 4, commentIds: ['saved'], bookmarkIds: [], draft: true },
   )
+})
+
+test('bookmarks and comments can share overlapping ranges', () => {
+  const segments = highlightSegments(10, [
+    { id: 'note', start: 1, end: 6, kind: 'comment' },
+    { id: 'mark', start: 4, end: 8, kind: 'bookmark' },
+  ])
+  assert.deepEqual(segments.find((part) => part.start === 4), {
+    start: 4,
+    end: 6,
+    commentIds: ['note'],
+    bookmarkIds: ['mark'],
+    draft: false,
+  })
 })

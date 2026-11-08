@@ -48,6 +48,15 @@ export interface CommentDraft {
   editingId?: string
 }
 
+export interface TextBookmark {
+  id: string
+  note_id: string
+  title: string
+  anchor: TextAnchor
+  created_at: string
+  updated_at: string
+}
+
 export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
   let response: Response
   try {
