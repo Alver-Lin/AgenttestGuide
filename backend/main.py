@@ -299,9 +299,25 @@ DIST = ROOT.parent / "frontend" / "dist"
 if DIST.is_dir():
     app.mount("/assets", StaticFiles(directory=DIST / "assets"), name="assets")
 
-    @app.get("/favicon.svg", include_in_schema=False)
+    @app.get("/favicon.png", include_in_schema=False)
     def favicon():
-        return FileResponse(DIST / "favicon.svg")
+        return FileResponse(DIST / "favicon.png")
+
+    @app.get("/favicon-32.png", include_in_schema=False)
+    def favicon_32():
+        return FileResponse(DIST / "favicon-32.png")
+
+    @app.get("/favicon-64.png", include_in_schema=False)
+    def favicon_64():
+        return FileResponse(DIST / "favicon-64.png")
+
+    @app.get("/apple-touch-icon.png", include_in_schema=False)
+    def apple_touch_icon():
+        return FileResponse(DIST / "apple-touch-icon.png")
+
+    @app.get("/icon.png", include_in_schema=False)
+    def brand_icon():
+        return FileResponse(DIST / "icon.png")
 
     @app.get("/", include_in_schema=False)
     def index():

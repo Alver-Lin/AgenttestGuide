@@ -615,7 +615,7 @@ onBeforeUnmount(() => {
       <aside class="file-sidebar" :class="{ 'is-open': mobileSidebar }">
         <div class="brand">
           <span class="brand-icon"
-            ><img src="/favicon.svg?v=agent-b" width="32" height="32" alt="" /></span
+            ><img src="/icon.png?v=shark-2" width="32" height="32" alt="" /></span
           ><strong>AgenttestGuide</strong
           ><button
             class="icon-button mobile-close"
