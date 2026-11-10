@@ -189,29 +189,53 @@ class MarkdownStore:
             count += 1
         return candidate
 
+    HIDDEN_DIR_NAMES = {"_assets", "images", "image"}
+
+    def iter_notebook_dirs(self):
+        """Yield content folders depth-first; skip hidden dirs and media folders."""
+        directories = []
+        stack = [self.root]
+        while stack:
+            current = stack.pop()
+            children = []
+            for child in current.iterdir():
+                if (
+                    child.name.startswith(".")
+                    or child.name in self.HIDDEN_DIR_NAMES
+                    or child.is_symlink()
+                    or not child.is_dir()
+                ):
+                    continue
+                children.append(child)
+            children.sort(key=lambda path: path.name.casefold())
+            for child in children:
+                directories.append(child)
+                stack.append(child)
+        directories.sort(key=lambda path: (len(path.relative_to(self.root).parts), path.as_posix().casefold()))
+        return directories
+
     def reconcile(self):
         """Observe native editor changes without copying bodies to the metadata index."""
         before = json.dumps(self.index, sort_keys=True, ensure_ascii=False)
         old_books, old_notes = self.index["notebooks"], self.index["notes"]
         books, notes = {}, {}
-        for directory in sorted(self.root.iterdir(), key=lambda path: path.name.casefold()):
-            if directory.name.startswith(".") or directory.is_symlink() or not directory.is_dir():
-                continue
+        for directory in self.iter_notebook_dirs():
+            relative = directory.relative_to(self.root).as_posix()
             identity = self.identity(directory)
-            match = next(((key, value) for key, value in old_books.items() if value["path"] == directory.name), None)
+            match = next(((key, value) for key, value in old_books.items() if value["path"] == relative), None)
             if not match:
                 match = next(((key, value) for key, value in old_books.items() if value.get("identity") == identity and not self.path(value["path"]).exists()), None)
             book_id, metadata = match if match else (str(uuid.uuid4()), {"color": "blue", "description": "", "created_at": timestamp(directory.stat().st_ctime)})
-            books[book_id] = {**metadata, "path": directory.name, "identity": identity}
+            books[book_id] = {**metadata, "path": relative, "identity": identity}
             for file in sorted(directory.iterdir(), key=lambda path: path.name.casefold()):
                 if file.name.startswith(".") or file.is_symlink() or not file.is_file() or file.suffix.lower() != ".md":
                     continue
-                relative, file_identity = file.relative_to(self.root).as_posix(), self.identity(file)
-                match = next(((key, value) for key, value in old_notes.items() if not value.get("deleted_at") and value["path"] == relative), None)
+                note_relative, file_identity = file.relative_to(self.root).as_posix(), self.identity(file)
+                match = next(((key, value) for key, value in old_notes.items() if not value.get("deleted_at") and value["path"] == note_relative), None)
                 if not match:
                     match = next(((key, value) for key, value in old_notes.items() if not value.get("deleted_at") and value.get("identity") == file_identity and not self.path(value["path"]).exists()), None)
                 note_id, metadata = match if match else (str(uuid.uuid4()), {"created_at": timestamp(file.stat().st_ctime), "tags": [], "is_favorite": False, "deleted_at": None})
-                notes[note_id] = {**metadata, "path": relative, "notebook_id": book_id, "title": file.stem, "identity": file_identity}
+                notes[note_id] = {**metadata, "path": note_relative, "notebook_id": book_id, "title": file.stem, "identity": file_identity}
         for note_id, metadata in old_notes.items():
             if metadata.get("deleted_at") and self.path(metadata["path"]).is_file():
                 notes[note_id] = metadata
@@ -244,10 +268,33 @@ class MarkdownStore:
             raise StorageError(404, "文件不存在")
         return item
 
+    def parent_id_for(self, folder_id, *, include_deleted=False):
+        item = self.folder(folder_id, include_deleted=include_deleted)
+        parent_path = Path(item["path"]).parent.as_posix()
+        if parent_path in {".", ""}:
+            return None
+        for key, book in self.index["notebooks"].items():
+            if book.get("deleted_at") and not include_deleted:
+                continue
+            if book["path"] == parent_path:
+                return key
+        return None
+
+    def descendant_folder_ids(self, folder_id, *, include_self=True):
+        root = self.folder(folder_id, include_deleted=True)["path"]
+        ids = []
+        for key, book in self.index["notebooks"].items():
+            path = book["path"]
+            if path == root or path.startswith(root + "/"):
+                if include_self or path != root:
+                    ids.append(key)
+        return ids
+
     def folder_data(self, folder_id):
         item = self.folder(folder_id)
         return {"id": folder_id, "name": Path(item["path"]).name, "color": item["color"],
-                "description": item["description"], "created_at": item["created_at"], "path": item["path"]}
+                "description": item["description"], "created_at": item["created_at"], "path": item["path"],
+                "parent_id": self.parent_id_for(folder_id)}
 
     def note_data(self, note_id):
         item = self.note(note_id)
@@ -267,33 +314,78 @@ class MarkdownStore:
     def create_folder(self, payload):
         with self.transaction():
             name = valid_name(payload["name"], folder=True)
-            destination = self.path(name)
+            if name in self.HIDDEN_DIR_NAMES:
+                raise StorageError(422, "images、image、_assets 为资源目录，不能作为普通文件夹")
+            parent_id = payload.get("parent_id") or None
+            if parent_id:
+                parent = self.folder(parent_id)
+                relative = f"{parent['path']}/{name}"
+            else:
+                relative = name
+            destination = self.path(relative)
             if destination.exists():
                 raise StorageError(409, "同名文件夹已存在")
-            destination.mkdir()
+            destination.mkdir(parents=False)
             folder_id = str(uuid.uuid4())
-            self.index["notebooks"][folder_id] = {"path": name, "color": payload["color"], "description": payload["description"], "created_at": now(), "identity": self.identity(destination)}
+            self.index["notebooks"][folder_id] = {
+                "path": relative,
+                "color": payload.get("color", "blue"),
+                "description": payload.get("description", ""),
+                "created_at": now(),
+                "identity": self.identity(destination),
+            }
             self.write_index()
             return self.folder_data(folder_id)
+
+    def rewrite_prefix(self, value, old_prefix, new_prefix):
+        if value == old_prefix:
+            return new_prefix
+        if value.startswith(old_prefix + "/"):
+            return new_prefix + value[len(old_prefix):]
+        return value
 
     def update_folder(self, folder_id, payload):
         with self.transaction():
             item = self.folder(folder_id)
             old_path = item["path"]
-            new_path = valid_name(payload["name"], folder=True)
+            leaf = valid_name(payload.get("name", Path(old_path).name), folder=True)
+            if leaf in self.HIDDEN_DIR_NAMES:
+                raise StorageError(422, "images、image、_assets 为资源目录，不能作为普通文件夹")
+            if "parent_id" in payload:
+                parent_id = payload.get("parent_id") or None
+                if parent_id == folder_id:
+                    raise StorageError(409, "不能移动到自身")
+                if parent_id:
+                    parent = self.folder(parent_id)
+                    if parent["path"] == old_path or parent["path"].startswith(old_path + "/"):
+                        raise StorageError(409, "不能移动到自己的子文件夹中")
+                    new_path = f"{parent['path']}/{leaf}"
+                else:
+                    new_path = leaf
+            else:
+                parent = Path(old_path).parent
+                new_path = leaf if parent.as_posix() in {".", ""} else f"{parent.as_posix()}/{leaf}"
             if new_path != old_path:
                 source, destination = self.path(old_path), self.path(new_path)
                 if destination.exists() and not destination.samefile(source):
                     raise StorageError(409, "同名文件夹已存在")
                 source.rename(destination)
+                affected = set(self.descendant_folder_ids(folder_id))
+                for book in self.index["notebooks"].values():
+                    book["path"] = self.rewrite_prefix(book["path"], old_path, new_path)
+                    if book.get("original_path"):
+                        book["original_path"] = self.rewrite_prefix(book["original_path"], old_path, new_path)
                 for note in self.index["notes"].values():
-                    field = "original_path" if note.get("deleted_at") else "path"
-                    if note["notebook_id"] == folder_id:
-                        note[field] = new_path + "/" + Path(note[field]).name
-                        if note.get("asset_dir"):
-                            note["asset_dir"] = new_path + note["asset_dir"][len(old_path):]
-                item["path"] = new_path
-            item.update(color=payload["color"], description=payload["description"])
+                    if note["notebook_id"] not in affected and not (
+                        note.get("path", "").startswith(old_path + "/")
+                        or note.get("original_path", "").startswith(old_path + "/")
+                    ):
+                        continue
+                    for field in ("path", "original_path", "asset_dir"):
+                        if note.get(field):
+                            note[field] = self.rewrite_prefix(note[field], old_path, new_path)
+            item.update(color=payload.get("color", item.get("color", "blue")),
+                        description=payload.get("description", item.get("description", "")))
             self.write_index()
             return self.folder_data(folder_id)
 
@@ -307,15 +399,31 @@ class MarkdownStore:
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 source.rename(destination)
                 deleted_at = now()
-                item.update(path=archive_path, original_path=old_path, deleted_at=deleted_at)
+                affected = set(self.descendant_folder_ids(folder_id))
+                for book_id in affected:
+                    book = self.index["notebooks"][book_id]
+                    book_old = book["path"]
+                    book.update(
+                        path=self.rewrite_prefix(book_old, old_path, archive_path),
+                        original_path=book_old,
+                        deleted_at=deleted_at,
+                    )
+                    if book_id != folder_id:
+                        book["deleted_with_folder"] = folder_id
                 for note in self.index["notes"].values():
-                    if note["notebook_id"] != folder_id:
+                    if note["notebook_id"] not in affected:
                         continue
                     if not note.get("deleted_at"):
-                        note.update(original_path=note["path"], path=archive_path + note["path"][len(old_path):],
-                                    deleted_at=deleted_at, deleted_with_folder=True)
+                        note.update(
+                            original_path=note["path"],
+                            path=self.rewrite_prefix(note["path"], old_path, archive_path),
+                            deleted_at=deleted_at,
+                            deleted_with_folder=True,
+                        )
+                    elif note.get("path"):
+                        note["path"] = self.rewrite_prefix(note["path"], old_path, archive_path)
                     if note.get("asset_dir"):
-                        note["asset_dir"] = archive_path + note["asset_dir"][len(old_path):]
+                        note["asset_dir"] = self.rewrite_prefix(note["asset_dir"], old_path, archive_path)
                 try:
                     self.write_index()
                 except Exception:
@@ -325,7 +433,17 @@ class MarkdownStore:
                 return
             if any(note["notebook_id"] == folder_id for note in self.index["notes"].values()):
                 raise StorageError(409, "请先移动该文件夹中的文件，并清理对应回收站文件")
-            if len(self.index["notebooks"]) <= 1:
+            if any(
+                book["path"].startswith(item["path"] + "/")
+                for book in self.index["notebooks"].values()
+                if not book.get("deleted_at")
+            ):
+                raise StorageError(409, "请先删除或移出子文件夹")
+            active_roots = [
+                book for book in self.index["notebooks"].values()
+                if not book.get("deleted_at") and Path(book["path"]).parent.as_posix() in {".", ""}
+            ]
+            if len(active_roots) <= 1 and Path(item["path"]).parent.as_posix() in {".", ""}:
                 raise StorageError(409, "至少需要保留一个文件夹")
             directory = self.path(item["path"])
             if any(directory.iterdir()):
@@ -342,25 +460,51 @@ class MarkdownStore:
                 source, destination = self.path(archive_path), self.path(original_path)
                 if destination.exists():
                     raise StorageError(409, "原位置已有同名文件夹，请先重命名该文件夹后重试")
+                parent = destination.parent
+                if parent != self.root and not parent.exists():
+                    raise StorageError(409, "请先恢复上级文件夹")
                 source.rename(destination)
-                item.update(path=item.pop("original_path"))
-                item.pop("deleted_at")
-                for note in self.index["notes"].values():
-                    if note["notebook_id"] != folder_id:
-                        continue
-                    if note.pop("deleted_with_folder", False):
-                        note.update(path=note.pop("original_path"), deleted_at=None)
-                    if note.get("asset_dir"):
-                        note["asset_dir"] = original_path + note["asset_dir"][len(archive_path):]
+                affected = [
+                    key for key, book in self.index["notebooks"].items()
+                    if key == folder_id or book.get("deleted_with_folder") == folder_id
+                ]
+                for book_id in affected:
+                    book = self.index["notebooks"][book_id]
+                    book_archive = book["path"]
+                    book_original = book.pop("original_path")
+                    book.update(path=book_original)
+                    book.pop("deleted_at", None)
+                    book.pop("deleted_with_folder", None)
+                    for note in self.index["notes"].values():
+                        if note["notebook_id"] != book_id:
+                            continue
+                        if note.pop("deleted_with_folder", False):
+                            note.update(path=note.pop("original_path"), deleted_at=None)
+                        if note.get("asset_dir"):
+                            note["asset_dir"] = self.rewrite_prefix(
+                                note["asset_dir"], book_archive, book_original
+                            )
                 try:
                     self.write_index()
                 except Exception:
                     destination.rename(source)
                     self.read_index()
                     raise
-            return {"notebook": self.folder_data(folder_id),
-                    "notes": [self.note_data(key) for key, note in self.index["notes"].items()
-                              if note["notebook_id"] == folder_id and not note.get("deleted_at")]}
+            root_path = self.index["notebooks"][folder_id]["path"]
+            restored_ids = [
+                key for key, book in self.index["notebooks"].items()
+                if not book.get("deleted_at")
+                and (book["path"] == root_path or book["path"].startswith(root_path + "/"))
+            ]
+            return {
+                "notebook": self.folder_data(folder_id),
+                "notebooks": [self.folder_data(key) for key in restored_ids],
+                "notes": [
+                    self.note_data(key)
+                    for key, note in self.index["notes"].items()
+                    if note["notebook_id"] in restored_ids and not note.get("deleted_at")
+                ],
+            }
 
     def create_note(self, payload):
         with self.transaction():

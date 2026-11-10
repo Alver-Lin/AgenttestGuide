@@ -15,6 +15,7 @@ import {
   Eye,
   Ellipsis,
   Trash2,
+  FolderInput,
   CheckCheck,
   LoaderCircle,
   CircleAlert,
@@ -93,7 +94,9 @@ const {
   saveAll,
   createFolder,
   renameFolder,
+  moveFolder,
   createFile,
+  moveFile,
   deleteEntry,
   restoreEntry,
   addImportedFile,
@@ -134,23 +137,54 @@ const currentFolder = computed(() =>
 const targetFolder = computed(() =>
   folders.value.find((folder) => folder.id === selectedFolderId.value),
 )
-const treeData = computed(() =>
-  folders.value.map((folder) => ({
-    key: `folder:${folder.id}`,
-    title: folder.name,
-    kind: 'folder',
-    id: folder.id,
-    children: activeFiles.value
-      .filter((file) => file.notebook_id === folder.id)
-      .sort((a, b) => a.title.localeCompare(b.title, 'zh-CN'))
-      .map((file) => ({
-        key: `file:${file.id}`,
-        title: file.title,
-        kind: 'file',
-        id: file.id,
-        isLeaf: true,
-      })),
-  })),
+const folderBreadcrumb = computed(() => {
+  const folder = currentFolder.value || targetFolder.value
+  if (!folder) return [] as typeof folders.value
+  const chain: typeof folders.value = []
+  let current: typeof folder | undefined = folder
+  const seen = new Set<string>()
+  while (current && !seen.has(current.id)) {
+    chain.unshift(current)
+    seen.add(current.id)
+    current = folders.value.find((item) => item.id === current?.parent_id)
+  }
+  return chain
+})
+const treeData = computed(() => {
+  const byParent = new Map<string | null, typeof folders.value>()
+  for (const folder of folders.value) {
+    const parent = folder.parent_id || null
+    const list = byParent.get(parent) || []
+    list.push(folder)
+    byParent.set(parent, list)
+  }
+  const build = (parentId: string | null): any[] =>
+    (byParent.get(parentId) || [])
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'))
+      .map((folder) => ({
+        key: `folder:${folder.id}`,
+        title: folder.name,
+        kind: 'folder',
+        id: folder.id,
+        children: [
+          ...build(folder.id),
+          ...activeFiles.value
+            .filter((file) => file.notebook_id === folder.id)
+            .sort((a, b) => a.title.localeCompare(b.title, 'zh-CN'))
+            .map((file) => ({
+              key: `file:${file.id}`,
+              title: file.title,
+              kind: 'file',
+              id: file.id,
+              isLeaf: true,
+            })),
+        ],
+      }))
+  return build(null)
+})
+const dialogParentFolder = computed(() =>
+  folders.value.find((folder) => folder.id === dialogFolderId.value),
 )
 const outlineOpen = ref(false)
 const outline = computed(() => {
@@ -235,15 +269,59 @@ const characterCount = computed(
 )
 const dialogOpen = ref(false)
 const importOpen = ref(false)
+const moveOpen = ref(false)
 const dialogKind = ref<'folder' | 'file'>('folder')
 const renameId = ref('')
 const dialogName = ref('')
 const dialogBusy = ref(false)
 const dialogFolderId = ref('')
+const moveKind = ref<'folder' | 'file'>('folder')
+const moveId = ref('')
+const moveTargetId = ref('')
+const moveBusy = ref(false)
 const nameInput = ref<{ focus: () => void }>()
-const dialogTitle = computed(
-  () => `${renameId.value ? '重命名' : '新建'}${dialogKind.value === 'folder' ? '文件夹' : '文件'}`,
+const moveItem = computed(() =>
+  moveKind.value === 'folder'
+    ? folders.value.find((folder) => folder.id === moveId.value)
+    : activeFiles.value.find((file) => file.id === moveId.value),
 )
+const moveTargetOptions = computed(() => {
+  const blocked =
+    moveKind.value === 'folder' && moveId.value
+      ? new Set(
+          folders.value
+            .filter((folder) => {
+              const moving = folders.value.find((item) => item.id === moveId.value)
+              return (
+                folder.id === moveId.value ||
+                (!!moving?.path &&
+                  !!folder.path &&
+                  (folder.path === moving.path || folder.path.startsWith(`${moving.path}/`)))
+              )
+            })
+            .map((folder) => folder.id),
+        )
+      : new Set<string>()
+  return [
+    { label: '根目录', value: '' },
+    ...folders.value
+      .filter((folder) => !blocked.has(folder.id))
+      .slice()
+      .sort((a, b) => (a.path || a.name).localeCompare(b.path || b.name, 'zh-CN'))
+      .map((folder) => ({
+        label: folder.path?.includes('/') ? folder.path.replaceAll('/', ' / ') : folder.name,
+        value: folder.id,
+      })),
+  ]
+})
+const dialogTitle = computed(() => {
+  if (renameId.value) return `重命名${dialogKind.value === 'folder' ? '文件夹' : '文件'}`
+  if (dialogKind.value === 'folder' && dialogParentFolder.value)
+    return `在「${dialogParentFolder.value.name}」下新建文件夹`
+  if (dialogKind.value === 'file' && dialogParentFolder.value)
+    return `在「${dialogParentFolder.value.name}」中新建文件`
+  return `新建${dialogKind.value === 'folder' ? '文件夹' : '文件'}`
+})
 
 async function initialize() {
   await load()
@@ -304,13 +382,16 @@ function openImportedFile(file: Note) {
 }
 
 function openCreate(kind: 'folder' | 'file') {
-  const folderId = selectedFolderId.value || currentFolder.value?.id || folders.value[0]?.id || ''
+  const folderId = selectedFolderId.value || currentFolder.value?.id || ''
   if (kind === 'file' && !folderId) {
-    message.info('请先创建一个文件夹')
-    return
+    if (!folders.value.length) {
+      message.info('请先创建一个文件夹')
+      return
+    }
   }
   dialogKind.value = kind
-  dialogFolderId.value = folderId
+  dialogFolderId.value =
+    kind === 'file' ? folderId || folders.value[0]?.id || '' : folderId
   renameId.value = ''
   dialogName.value = ''
   dialogOpen.value = true
@@ -328,17 +409,141 @@ function openRename(kind: 'folder' | 'file', id: string) {
   nextTick(() => nameInput.value?.focus())
 }
 
+function openMove(kind: 'folder' | 'file', id: string) {
+  moveKind.value = kind
+  moveId.value = id
+  if (kind === 'folder') {
+    moveTargetId.value = folders.value.find((folder) => folder.id === id)?.parent_id || ''
+  } else {
+    moveTargetId.value = activeFiles.value.find((file) => file.id === id)?.notebook_id || ''
+  }
+  moveOpen.value = true
+}
+
+async function submitMove() {
+  if (moveBusy.value || !moveId.value) return
+  moveBusy.value = true
+  try {
+    if (moveKind.value === 'folder') {
+      const parentId = moveTargetId.value || null
+      await moveFolder(moveId.value, parentId)
+      const parentKey = parentId ? `folder:${parentId}` : ''
+      if (parentKey && !expandedKeys.value.includes(parentKey)) expandedKeys.value.push(parentKey)
+      selectNode([`folder:${moveId.value}`], false)
+    } else {
+      if (!moveTargetId.value) {
+        message.warning('请选择目标文件夹')
+        return
+      }
+      await moveFile(moveId.value, moveTargetId.value)
+      const parentKey = `folder:${moveTargetId.value}`
+      if (!expandedKeys.value.includes(parentKey)) expandedKeys.value.push(parentKey)
+      selectNode([`file:${moveId.value}`], false)
+    }
+    moveOpen.value = false
+    message.success('已移动')
+  } catch (error) {
+    message.error((error as Error).message)
+  } finally {
+    moveBusy.value = false
+  }
+}
+
+function parseTreeKey(key: string | number) {
+  const value = String(key)
+  if (value.startsWith('folder:')) return { kind: 'folder' as const, id: value.slice(7) }
+  if (value.startsWith('file:')) return { kind: 'file' as const, id: value.slice(5) }
+  return null
+}
+
+function resolveDropFolderId(node: any, dropToGap: boolean): string | null {
+  const target = parseTreeKey(node.key)
+  if (!target) return null
+  if (!dropToGap) {
+    if (target.kind === 'folder') return target.id
+    return activeFiles.value.find((file) => file.id === target.id)?.notebook_id || null
+  }
+  if (target.kind === 'folder')
+    return folders.value.find((folder) => folder.id === target.id)?.parent_id || null
+  return activeFiles.value.find((file) => file.id === target.id)?.notebook_id || null
+}
+
+function allowTreeDrop({ dropNode, dragNode, dropPosition }: any) {
+  const drag = parseTreeKey(dragNode.key)
+  const drop = parseTreeKey(dropNode.key)
+  if (!drag || !drop) return false
+  if (dropPosition === 0 && drop.kind !== 'folder') return false
+  if (drag.kind === 'folder' && drop.kind === 'folder') {
+    const moving = folders.value.find((folder) => folder.id === drag.id)
+    const target = folders.value.find((folder) => folder.id === drop.id)
+    if (
+      moving?.path &&
+      target?.path &&
+      (target.path === moving.path || target.path.startsWith(`${moving.path}/`))
+    ) {
+      return false
+    }
+  }
+  return true
+}
+
+async function onTreeDrop(info: any) {
+  const drag = parseTreeKey(info.dragNode.key)
+  if (!drag) return
+  const targetFolderId = resolveDropFolderId(info.node, !!info.dropToGap)
+  try {
+    if (drag.kind === 'folder') {
+      const currentParent = folders.value.find((folder) => folder.id === drag.id)?.parent_id || null
+      if (currentParent === targetFolderId) return
+      await moveFolder(drag.id, targetFolderId)
+      if (targetFolderId) {
+        const parentKey = `folder:${targetFolderId}`
+        if (!expandedKeys.value.includes(parentKey)) expandedKeys.value.push(parentKey)
+      }
+      selectNode([`folder:${drag.id}`], false)
+    } else {
+      if (!targetFolderId) {
+        message.info('文件需要放到某个文件夹中')
+        return
+      }
+      const current = activeFiles.value.find((file) => file.id === drag.id)?.notebook_id
+      if (current === targetFolderId) return
+      await moveFile(drag.id, targetFolderId)
+      const parentKey = `folder:${targetFolderId}`
+      if (!expandedKeys.value.includes(parentKey)) expandedKeys.value.push(parentKey)
+      selectNode([`file:${drag.id}`], false)
+    }
+    message.success('已移动')
+  } catch (error) {
+    message.error((error as Error).message)
+  }
+}
+
 function confirmDelete(kind: 'folder' | 'file', id: string) {
   const folder = kind === 'folder' ? folders.value.find((item) => item.id === id) : undefined
   const file = kind === 'file' ? activeFiles.value.find((item) => item.id === id) : undefined
   const name = folder?.name || file?.title
   if (!name) return
-  const count = activeFiles.value.filter((item) => item.notebook_id === id).length
+  const subtreeIds =
+    kind === 'folder' && folder?.path
+      ? new Set(
+          folders.value
+            .filter(
+              (item) =>
+                item.id === id || (!!item.path && item.path.startsWith(`${folder.path}/`)),
+            )
+            .map((item) => item.id),
+        )
+      : new Set(kind === 'folder' ? [id] : [])
+  const count = activeFiles.value.filter((item) =>
+    kind === 'folder' ? subtreeIds.has(item.notebook_id) : false,
+  ).length
+  const childFolderCount = Math.max(0, subtreeIds.size - 1)
   Modal.confirm({
     title: `删除${kind === 'folder' ? '文件夹' : '文件'}“${name}”？`,
     content:
       kind === 'folder'
-        ? `文件夹${count ? `及其中的 ${count} 个文件` : ''}将移入回收目录，删除后可点击“撤销”恢复。`
+        ? `文件夹${childFolderCount ? `、${childFolderCount} 个子文件夹` : ''}${count ? `及其中的 ${count} 个文件` : ''}将移入回收目录，删除后可点击“撤销”恢复。`
         : '文件和已保存的注释、书签将保留在回收目录，删除后可点击“撤销”恢复。',
     okText: '确认删除',
     okType: 'danger',
@@ -349,9 +554,21 @@ function confirmDelete(kind: 'folder' | 'file', id: string) {
         const previousFolderId = file?.notebook_id
         await deleteEntry(kind, id)
         if (kind === 'folder') {
-          expandedKeys.value = expandedKeys.value.filter((key) => key !== `folder:${id}`)
-          if (selectedFolderId.value === id) {
-            const first = folders.value[0]
+          expandedKeys.value = expandedKeys.value.filter(
+            (key) => !(String(key).startsWith('folder:') && subtreeIds.has(String(key).slice(7))),
+          )
+          const selectedFileNotebook = activeFiles.value.find(
+            (item) => item.id === selectedFileId.value,
+          )?.notebook_id
+          if (
+            subtreeIds.has(selectedFolderId.value) ||
+            (selectedFileNotebook && subtreeIds.has(selectedFileNotebook))
+          ) {
+            const parentId = folder?.parent_id
+            const first =
+              folders.value.find((item) => item.id === parentId) ||
+              folders.value.find((item) => !item.parent_id) ||
+              folders.value[0]
             if (first) selectNode([`folder:${first.id}`], false)
             else {
               selectedFileId.value = ''
@@ -414,7 +631,12 @@ async function submitName() {
       if (dialogKind.value === 'folder') await renameFolder(renameId.value, name)
       else updateFile(renameId.value, { title: name })
     } else if (dialogKind.value === 'folder') {
-      const folder = await createFolder(name)
+      const parentId = dialogFolderId.value || undefined
+      const folder = await createFolder(name, parentId)
+      if (parentId) {
+        const parentKey = `folder:${parentId}`
+        if (!expandedKeys.value.includes(parentKey)) expandedKeys.value.push(parentKey)
+      }
       selectNode([`folder:${folder.id}`], false)
       mobileSidebar.value = true
     } else {
@@ -663,8 +885,11 @@ onBeforeUnmount(() => {
             :selected-keys="selectedKeys"
             :expanded-keys="expandedKeys"
             block-node
+            draggable
+            :allow-drop="allowTreeDrop"
             @select="onTreeSelect"
             @expand="expandNodes"
+            @drop="onTreeDrop"
           >
             <template #title="{ title, kind, id, key }"
               ><span :class="['tree-node', kind]"
@@ -682,6 +907,8 @@ onBeforeUnmount(() => {
                     ><a-menu
                       ><a-menu-item @click="openRename(kind, id)"
                         ><PenLine :size="13" /> 重命名</a-menu-item
+                      ><a-menu-item @click="openMove(kind, id)"
+                        ><FolderInput :size="13" /> 移动到…</a-menu-item
                       ><a-menu-divider />
                       <a-menu-item danger @click="confirmDelete(kind, id)"
                         ><Trash2 :size="13" /> 删除{{
@@ -729,12 +956,20 @@ onBeforeUnmount(() => {
               >
                 <List :size="17" /></button
             ></a-tooltip>
-            <template v-if="current"
-              ><span class="path-folder">{{ currentFolder?.name }}</span
-              ><ChevronRight :size="15" /><span class="path-file">{{
-                current.title
-              }}</span></template
-            ><span v-else class="path-file">{{ targetFolder?.name || '文件' }}</span>
+            <template v-if="current">
+              <template v-for="folder in folderBreadcrumb" :key="folder.id">
+                <span class="path-folder">{{ folder.name }}</span>
+                <ChevronRight :size="15" />
+              </template>
+              <span class="path-file">{{ current.title }}</span>
+            </template>
+            <template v-else-if="folderBreadcrumb.length">
+              <template v-for="(folder, index) in folderBreadcrumb" :key="folder.id">
+                <ChevronRight v-if="index" :size="15" />
+                <span class="path-file">{{ folder.name }}</span>
+              </template>
+            </template>
+            <span v-else class="path-file">文件</span>
           </div>
           <div class="document-header-actions">
             <a-tooltip :title="isDark ? '浅色模式' : '深色模式'"
@@ -1059,7 +1294,46 @@ onBeforeUnmount(() => {
             dialogKind === 'folder' ? '例如：Agent 评测基础' : '例如：我的第一份评测笔记'
           "
           @press-enter="submitName"
-      /></a-modal>
+        />
+        <p
+          v-if="!renameId && dialogKind === 'folder' && dialogParentFolder"
+          class="dialog-parent-hint"
+        >
+          将创建在「{{ dialogParentFolder.name }}」内
+          <button type="button" @click="dialogFolderId = ''">改为根目录</button>
+        </p></a-modal
+      >
+      <a-modal
+        v-model:open="moveOpen"
+        :title="`移动${moveKind === 'folder' ? '文件夹' : '文件'}${moveItem ? `“${'name' in moveItem ? moveItem.name : moveItem.title}”` : ''}`"
+        :confirm-loading="moveBusy"
+        ok-text="移动"
+        cancel-text="取消"
+        width="420px"
+        @ok="submitMove"
+      >
+        <label class="name-label" for="move-target">目标位置</label>
+        <a-select
+          id="move-target"
+          v-model:value="moveTargetId"
+          :options="
+            moveKind === 'file'
+              ? moveTargetOptions.filter((item) => item.value)
+              : moveTargetOptions
+          "
+          :field-names="{ label: 'label', value: 'value' }"
+          style="width: 100%"
+          placeholder="选择目标文件夹"
+          show-search
+          :filter-option="
+            (input: string, option: any) =>
+              String(option?.label || '')
+                .toLowerCase()
+                .includes(input.toLowerCase())
+          "
+        />
+        <p class="dialog-parent-hint">也可在左侧文件树中直接拖拽移动</p>
+      </a-modal>
     </div>
   </a-config-provider>
 </template>

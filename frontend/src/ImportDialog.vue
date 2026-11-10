@@ -69,7 +69,15 @@ const ready = computed(
     (mode.value === 'url' ? !!url.value.trim() : !!pending.value.length),
 )
 const folderOptions = computed(() =>
-  props.folders.map((folder) => ({ label: folder.name, value: folder.id })),
+  props.folders
+    .slice()
+    .sort((a, b) => (a.path || a.name).localeCompare(b.path || b.name, 'zh-CN'))
+    .map((folder) => ({
+      label: folder.path?.includes('/')
+        ? folder.path.replaceAll('/', ' / ')
+        : folder.name,
+      value: folder.id,
+    })),
 )
 
 async function loadConfig() {

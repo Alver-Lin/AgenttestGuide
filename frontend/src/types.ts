@@ -1,5 +1,6 @@
 export interface Notebook {
   path?: string
+  parent_id?: string | null
   id: string
   name: string
   color: 'green' | 'orange' | 'blue' | 'purple'

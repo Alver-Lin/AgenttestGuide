@@ -87,6 +87,7 @@ class NotebookInput(BaseModel):
     name: str = Field(min_length=1, max_length=40)
     color: Literal["green", "orange", "blue", "purple"] = "blue"
     description: str = Field(default="", max_length=200)
+    parent_id: str | None = None
 
     @field_validator("name")
     @classmethod
@@ -94,6 +95,14 @@ class NotebookInput(BaseModel):
         if not value.strip():
             raise ValueError("文件夹名称不能为空")
         return value.strip()
+
+    @field_validator("parent_id")
+    @classmethod
+    def clean_parent(cls, value):
+        if value is None:
+            return None
+        value = value.strip()
+        return value or None
 
 
 class NoteCreate(BaseModel):
@@ -187,7 +196,7 @@ def create_notebook(payload: NotebookInput):
 
 @app.put("/api/notebooks/{notebook_id}")
 def update_notebook(notebook_id: str, payload: NotebookInput):
-    return store.update_folder(notebook_id, payload.model_dump())
+    return store.update_folder(notebook_id, payload.model_dump(exclude_unset=True))
 
 
 @app.delete("/api/notebooks/{notebook_id}", status_code=204)
