@@ -23,6 +23,8 @@ import {
   Heading2,
   Bold,
   List,
+  ListTree,
+  ListCollapse,
   Quote,
   Code2,
   ImagePlus,
@@ -33,13 +35,19 @@ import {
   Moon,
   Sun,
 } from 'lucide-vue-next'
-import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import { useFiles } from './useFiles'
 import { useComments } from './useComments'
 import { useBookmarks } from './useBookmarks'
 import { useEditorImages } from './useEditorImages'
 import { markdownImageUrl } from './markdownImages'
+import { renderMarkdown } from './markdownRender'
+import {
+  extractOutline,
+  outlineHasChildren,
+  outlineItemVisible,
+  collapsibleOutlineIds,
+} from './outline'
 import { locateAnchor, readSelectionAnchor, selectionRect } from './annotations'
 import CommentsPanel from './CommentsPanel.vue'
 import BookmarksPanel from './BookmarksPanel.vue'
@@ -187,25 +195,29 @@ const dialogParentFolder = computed(() =>
   folders.value.find((folder) => folder.id === dialogFolderId.value),
 )
 const outlineOpen = ref(false)
-const outline = computed(() => {
-  const items: { id: string; level: number; text: string }[] = []
-  const content = current.value?.content || ''
-  let index = 0
-  for (const match of content.matchAll(/^(#{1,3})\s+(.+)$/gm)) {
-    const text = match[2]
-      .replace(/!\[([^\]]*)\]\([^)]+\)/g, '$1')
-      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-      .replace(/[*_`~]+/g, '')
-      .trim()
-    if (!text) continue
-    items.push({ id: `heading-${index++}`, level: match[1].length, text })
-  }
-  return items
-})
+const outlineCollapsed = ref<Set<string>>(new Set())
+const outline = computed(() => extractOutline(current.value?.content || ''))
+const visibleOutline = computed(() =>
+  outline.value
+    .map((item, index) => ({
+      ...item,
+      index,
+      hasChildren: outlineHasChildren(outline.value, index),
+      visible: outlineItemVisible(outline.value, index, outlineCollapsed.value),
+      expanded: !outlineCollapsed.value.has(item.id),
+    }))
+    .filter((item) => item.visible),
+)
+watch(
+  () => current.value?.id,
+  () => {
+    outlineCollapsed.value = new Set()
+  },
+)
 const rendered = computed(() => {
-  const html = DOMPurify.sanitize(
-    marked.parse(current.value?.content || '', { gfm: true }) as string,
-  )
+  const html = DOMPurify.sanitize(renderMarkdown(current.value?.content || ''), {
+    ADD_ATTR: ['class'],
+  })
   const id = current.value?.id
   if (!id) return html
   const document = new DOMParser().parseFromString(html, 'text/html')
@@ -356,6 +368,21 @@ function selectNode(keys: (string | number)[], closeSidebar = true) {
 
 function toggleOutline() {
   outlineOpen.value = !outlineOpen.value
+}
+
+function toggleOutlineItem(id: string) {
+  const next = new Set(outlineCollapsed.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  outlineCollapsed.value = next
+}
+
+function expandAllOutline() {
+  outlineCollapsed.value = new Set()
+}
+
+function collapseAllOutline() {
+  outlineCollapsed.value = new Set(collapsibleOutlineIds(outline.value))
 }
 
 function jumpToHeading(id: string) {
@@ -1054,20 +1081,56 @@ onBeforeUnmount(() => {
                   <div>
                     <List :size="16" /><strong>目录</strong>
                   </div>
+                  <div v-if="outline.length" class="outline-actions">
+                    <a-tooltip title="全部展开"
+                      ><button
+                        type="button"
+                        class="icon-button outline-action"
+                        aria-label="全部展开"
+                        @click="expandAllOutline"
+                      >
+                        <ListTree :size="15" /></button
+                    ></a-tooltip>
+                    <a-tooltip title="全部折叠"
+                      ><button
+                        type="button"
+                        class="icon-button outline-action"
+                        aria-label="全部折叠"
+                        @click="collapseAllOutline"
+                      >
+                        <ListCollapse :size="15" /></button
+                    ></a-tooltip>
+                  </div>
                 </header>
                 <nav class="outline-list">
                   <button class="outline-item level-0" @click="jumpToHeading('document-title')">
                     {{ current.title }}
                   </button>
-                  <button
-                    v-for="item in outline"
+                  <div
+                    v-for="item in visibleOutline"
                     :key="item.id"
-                    :class="['outline-item', `level-${item.level}`]"
-                    :title="item.text"
-                    @click="jumpToHeading(item.id)"
+                    :class="['outline-row', `level-${item.level}`]"
                   >
-                    {{ item.text }}
-                  </button>
+                    <button
+                      v-if="item.hasChildren"
+                      type="button"
+                      class="outline-twist"
+                      :aria-label="item.expanded ? '折叠' : '展开'"
+                      :aria-expanded="item.expanded"
+                      @click="toggleOutlineItem(item.id)"
+                    >
+                      <ChevronRight :size="14" :class="{ open: item.expanded }" />
+                    </button>
+                    <span v-else class="outline-twist spacer" aria-hidden="true" />
+                    <button
+                      type="button"
+                      class="outline-item"
+                      :title="item.text"
+                      @click="jumpToHeading(item.id)"
+                    >
+                      {{ item.text }}
+                    </button>
+                  </div>
                   <p v-if="!outline.length" class="outline-empty">正文中还没有标题</p>
                 </nav>
               </aside>
