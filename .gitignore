@@ -12,3 +12,6 @@ backend/data/
 .env
 
 .pnpm-store/
+**/node_modules/
+content/**/.env
+content/**/output/

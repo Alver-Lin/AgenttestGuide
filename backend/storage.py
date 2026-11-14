@@ -189,7 +189,18 @@ class MarkdownStore:
             count += 1
         return candidate
 
-    HIDDEN_DIR_NAMES = {"_assets", "images", "image"}
+    HIDDEN_DIR_NAMES = {
+        "_assets",
+        "images",
+        "image",
+        "node_modules",
+        "__pycache__",
+        ".venv",
+        "venv",
+        "dist",
+        "build",
+        "output",
+    }
 
     def iter_notebook_dirs(self):
         """Yield content folders depth-first; skip hidden dirs and media folders."""
