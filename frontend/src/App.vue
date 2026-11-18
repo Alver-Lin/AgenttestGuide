@@ -31,10 +31,9 @@ import {
   X,
   MessageSquareText,
   Bookmark,
-  Upload as ImportIcon,
-  Moon,
-  Sun,
   Bug,
+  Upload as ImportIcon,
+  Settings,
 } from 'lucide-vue-next'
 import DOMPurify from 'dompurify'
 import { useFiles } from './useFiles'
@@ -54,6 +53,7 @@ import CommentsPanel from './CommentsPanel.vue'
 import BookmarksPanel from './BookmarksPanel.vue'
 import ImportDialog from './ImportDialog.vue'
 import SpiderOverlay from './SpiderOverlay.vue'
+import SettingsPanel from './SettingsPanel.vue'
 import type { Note, TextAnchor } from './types'
 
 const THEME_KEY = 'agenttestguide-theme'
@@ -68,6 +68,7 @@ function readStoredTheme(): boolean {
 
 const isDark = ref(readStoredTheme())
 const spiderEnabled = ref(localStorage.getItem(SPIDER_KEY) === '1')
+const settingsOpen = ref(false)
 const theme = computed(() => ({
   algorithm: isDark.value ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
   token: {
@@ -88,13 +89,33 @@ function applyTheme(dark: boolean) {
   localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light')
 }
 
-function toggleTheme() {
-  isDark.value = !isDark.value
+const spiderCrawling = ref(false)
+const spiderCrawlRequestId = ref(0)
+
+function setSpiderEnabled(on: boolean) {
+  spiderEnabled.value = on
+  localStorage.setItem(SPIDER_KEY, on ? '1' : '0')
+  if (on && current.value) editing.value = false
 }
 
-function toggleSpider() {
-  spiderEnabled.value = !spiderEnabled.value
-  localStorage.setItem(SPIDER_KEY, spiderEnabled.value ? '1' : '0')
+async function startKeywordCrawl() {
+  if (!current.value || spiderCrawling.value) return
+  if (editing.value) editing.value = false
+  if (!spiderEnabled.value) setSpiderEnabled(true)
+  // Wait for reader DOM (and spider overlay) after leaving edit / enabling spider.
+  await nextTick()
+  await nextTick()
+  spiderCrawlRequestId.value += 1
+}
+
+/** Insert confirmed spider keywords at the start of the current note. */
+function insertSpiderKeywords(phrases: string[]) {
+  const file = current.value
+  if (!file || !phrases.length) return
+  const block = `> **关键词**：${phrases.join(' · ')}\n\n`
+  const cleaned = file.content.replace(/^>\s*\*\*关键词\*\*[^\n]*\n+(\n)?/, '')
+  updateFile(file.id, { content: block + cleaned })
+  void message.success('已将关键词插入文首')
 }
 
 watch(isDark, applyTheme, { immediate: true })
@@ -1008,24 +1029,6 @@ onBeforeUnmount(() => {
             <span v-else class="path-file">文件</span>
           </div>
           <div class="document-header-actions">
-            <a-tooltip :title="spiderEnabled ? '关闭蜘蛛' : '打开蜘蛛'"
-              ><button
-                class="icon-button spider-toggle"
-                :class="{ active: spiderEnabled }"
-                :aria-label="spiderEnabled ? '关闭蜘蛛' : '打开蜘蛛'"
-                :aria-pressed="spiderEnabled"
-                @click="toggleSpider"
-              >
-                <Bug :size="17" /></button
-            ></a-tooltip>
-            <a-tooltip :title="isDark ? '浅色模式' : '深色模式'"
-              ><button
-                class="icon-button theme-toggle"
-                :aria-label="isDark ? '切换到浅色模式' : '切换到深色模式'"
-                @click="toggleTheme"
-              >
-                <Sun v-if="isDark" :size="17" /><Moon v-else :size="17" /></button
-            ></a-tooltip>
             <template v-if="current">
               <a-tooltip title="阅读"
                 ><button
@@ -1074,7 +1077,27 @@ onBeforeUnmount(() => {
                   >
                 </button></a-tooltip
               >
+              <a-tooltip title="爬取关键词"
+                ><button
+                  class="icon-button"
+                  :class="{ active: spiderCrawling }"
+                  aria-label="爬取关键词"
+                  :disabled="spiderCrawling"
+                  @click="startKeywordCrawl"
+                >
+                  <Bug :size="17" /></button
+              ></a-tooltip>
             </template>
+            <a-tooltip title="设置"
+              ><button
+                class="icon-button settings-toggle"
+                :class="{ active: settingsOpen }"
+                aria-label="设置"
+                :aria-expanded="settingsOpen"
+                @click="settingsOpen = true"
+              >
+                <Settings :size="17" /></button
+            ></a-tooltip>
           </div>
         </header>
         <div v-if="loading" class="center-state">
@@ -1349,7 +1372,22 @@ onBeforeUnmount(() => {
           </div>
         </template>
       </main>
-      <SpiderOverlay :active="spiderEnabled" :dark="isDark" />
+      <SpiderOverlay
+        :active="spiderEnabled"
+        :dark="isDark"
+        :text="current?.content || ''"
+        :body-el="markdownBody"
+        :crawl-request-id="spiderCrawlRequestId"
+        @update:crawling="spiderCrawling = $event"
+        @confirm="insertSpiderKeywords"
+      />
+      <SettingsPanel
+        v-model:open="settingsOpen"
+        :dark="isDark"
+        :spider-enabled="spiderEnabled"
+        @update:dark="isDark = $event"
+        @update:spider-enabled="setSpiderEnabled"
+      />
       <ImportDialog
         v-model:open="importOpen"
         :folders="folders"

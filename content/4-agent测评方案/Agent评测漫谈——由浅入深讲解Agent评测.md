@@ -1,3 +1,5 @@
+> **关键词**：Agent评测 · 观测 + 评测 = 持续迭代 · Trajectory Evaluation · 人人一致 · 人机一致 · Rubric 二元化 · Bad Case · 长程Agent · Skill评测 · 评测基础设施
+
 ![Agent评测漫谈 —— 由浅入深讲解Agent评测](https://p1.meituan.net/meituantechblog/07ca6e0dbead38c588608aba7b687169493204.jpg)
 
 # Agent评测漫谈 —— 由浅入深讲解Agent评测

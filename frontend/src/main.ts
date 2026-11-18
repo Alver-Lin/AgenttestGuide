@@ -11,6 +11,7 @@ import {
   Upload,
   Select,
   Checkbox,
+  Switch,
 } from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 import App from './App.vue'
@@ -28,4 +29,5 @@ createApp(App)
   .use(Upload)
   .use(Select)
   .use(Checkbox)
+  .use(Switch)
   .mount('#app')
