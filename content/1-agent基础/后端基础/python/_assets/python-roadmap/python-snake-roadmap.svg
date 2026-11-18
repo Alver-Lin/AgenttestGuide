@@ -1,0 +1,323 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="1550" viewBox="0 0 1640 1550" role="img" aria-labelledby="title desc">
+<title id="title">Python 蛇形学习路线图</title>
+<desc id="desc">从左上角 01 开始，按箭头逐行左右折返，经过 L1 至 L7 的 42 个学习节点。每个节点标注主题及关键名词。</desc>
+<rect width="1640" height="1550" rx="20" fill="#111827"/>
+<text x="72" y="42" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="38" fill="#eef2f7">Python 蛇形学习路线</text>
+<text x="72" y="101" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="22" fill="#a9b5c7">从 01 开始，沿箭头逐行折返；每个节点是一组要学的模块或名词。</text>
+<text x="1340" y="55" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="20" fill="#58d5c4">7 层 · 42 个节点</text>
+<text x="72" y="157" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#58d5c4">L1</text>
+<text x="126" y="157" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#eef2f7">语言地基</text>
+<text x="355" y="160" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="18" fill="#a9b5c7">能写短脚本</text>
+<rect x="72" y="200" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="86" y="212" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">01</text>
+<text x="117" y="210" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">环境与运行</text>
+<text x="86" y="245" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">解释器 · REPL · 缩进</text>
+<text x="86" y="271" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">sys · python -c</text>
+<polyline points="301.00,254.00 317.00,254.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="317.00,254.00 307.00,249.00 307.00,259.00" fill="#58d5c4"/>
+<rect x="322" y="200" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="336" y="212" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">02</text>
+<text x="367" y="210" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">变量与类型</text>
+<text x="336" y="245" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">对象 · 引用 · 可变性</text>
+<text x="336" y="271" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">int · float · bool · None</text>
+<polyline points="551.00,254.00 567.00,254.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="567.00,254.00 557.00,249.00 557.00,259.00" fill="#58d5c4"/>
+<rect x="572" y="200" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="586" y="212" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">03</text>
+<text x="617" y="210" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">字符串</text>
+<text x="586" y="245" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">切片 · 编码 · 格式化</text>
+<text x="586" y="271" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">str · bytes · f-string</text>
+<polyline points="801.00,254.00 817.00,254.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="817.00,254.00 807.00,249.00 807.00,259.00" fill="#58d5c4"/>
+<rect x="822" y="200" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="836" y="212" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">04</text>
+<text x="867" y="210" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">容器与数据结构</text>
+<text x="836" y="245" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">列表 · 元组 · 字典 · 集合</text>
+<text x="836" y="271" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">list · tuple · dict · set</text>
+<polyline points="1051.00,254.00 1067.00,254.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1067.00,254.00 1057.00,249.00 1057.00,259.00" fill="#58d5c4"/>
+<rect x="1072" y="200" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1086" y="212" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">05</text>
+<text x="1117" y="210" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">表达式与控制流</text>
+<text x="1086" y="245" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">运算符 · 分支 · 循环</text>
+<text x="1086" y="271" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">if · match · for · while</text>
+<polyline points="1301.00,254.00 1317.00,254.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1317.00,254.00 1307.00,249.00 1307.00,259.00" fill="#58d5c4"/>
+<rect x="1322" y="200" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1336" y="212" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">06</text>
+<text x="1367" y="210" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">函数基础</text>
+<text x="1336" y="245" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">参数 · 返回值 · 解包</text>
+<text x="1336" y="271" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">def · return · *args</text>
+<polyline points="1552.00,254.00 1554.12,254.22 1556.15,254.89 1558.09,255.97 1559.95,257.45 1561.72,259.32 1563.40,261.55 1565.00,264.13 1566.52,267.04 1567.94,270.25 1569.28,273.76 1570.53,277.54 1571.70,281.58 1572.78,285.85 1573.77,290.35 1574.68,295.04 1575.50,299.92 1576.24,304.96 1576.88,310.14 1577.44,315.46 1577.92,320.88 1578.31,326.39 1578.61,331.98 1578.83,337.62 1578.96,343.30 1579.00,349.00 1578.96,354.70 1578.83,360.38 1578.61,366.02 1578.31,371.61 1577.92,377.12 1577.44,382.54 1576.88,387.86 1576.24,393.04 1575.50,398.08 1574.68,402.96 1573.77,407.65 1572.78,412.15 1571.70,416.42 1570.53,420.46 1569.28,424.24 1567.94,427.75 1566.52,430.96 1565.00,433.87 1563.40,436.45 1561.72,438.68 1559.95,440.55 1558.09,442.03 1556.15,443.11 1554.12,443.78 1552.00,444.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1552.00,444.00 1562.47,447.92 1561.42,437.97" fill="#58d5c4"/>
+<text x="72" y="347" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#58d5c4">L2</text>
+<text x="126" y="347" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#eef2f7">程序骨架</text>
+<text x="355" y="350" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="18" fill="#a9b5c7">能组织中等规模程序</text>
+<rect x="1322" y="390" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1336" y="402" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">07</text>
+<text x="1367" y="400" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">模块与包</text>
+<text x="1336" y="435" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">导入 · 包结构 · 入口</text>
+<text x="1336" y="461" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">import · __name__</text>
+<polyline points="1317.00,444.00 1301.00,444.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1301.00,444.00 1311.00,449.00 1311.00,439.00" fill="#58d5c4"/>
+<rect x="1072" y="390" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1086" y="402" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">08</text>
+<text x="1117" y="400" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">环境与依赖</text>
+<text x="1086" y="435" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">隔离环境 · 安装依赖</text>
+<text x="1086" y="461" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">venv · pip · pyproject</text>
+<polyline points="1067.00,444.00 1051.00,444.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1051.00,444.00 1061.00,449.00 1061.00,439.00" fill="#58d5c4"/>
+<rect x="822" y="390" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="836" y="402" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">09</text>
+<text x="867" y="400" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">异常处理</text>
+<text x="836" y="435" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">捕获 · 清理 · 异常链</text>
+<text x="836" y="461" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">try · except · finally</text>
+<polyline points="817.00,444.00 801.00,444.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="801.00,444.00 811.00,449.00 811.00,439.00" fill="#58d5c4"/>
+<rect x="572" y="390" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="586" y="402" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">10</text>
+<text x="617" y="400" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">文件与序列化</text>
+<text x="586" y="435" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">路径 · 文件读写 · JSON</text>
+<text x="586" y="461" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">pathlib · with · json</text>
+<polyline points="567.00,444.00 551.00,444.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="551.00,444.00 561.00,449.00 561.00,439.00" fill="#58d5c4"/>
+<rect x="322" y="390" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="336" y="402" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">11</text>
+<text x="367" y="400" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">作用域与拷贝</text>
+<text x="336" y="435" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">LEGB · 闭包作用域</text>
+<text x="336" y="461" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">global · nonlocal · copy</text>
+<polyline points="317.00,444.00 301.00,444.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="301.00,444.00 311.00,449.00 311.00,439.00" fill="#58d5c4"/>
+<rect x="72" y="390" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="86" y="402" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">12</text>
+<text x="117" y="400" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">面向对象</text>
+<text x="86" y="435" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">类 · 继承 · 属性 · 方法</text>
+<text x="86" y="461" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">dataclass · property</text>
+<polyline points="66.00,444.00 63.88,444.22 61.85,444.89 59.91,445.97 58.05,447.45 56.28,449.32 54.60,451.55 53.00,454.13 51.48,457.04 50.06,460.25 48.72,463.76 47.47,467.54 46.30,471.58 45.22,475.85 44.23,480.35 43.32,485.04 42.50,489.92 41.76,494.96 41.12,500.14 40.56,505.46 40.08,510.88 39.69,516.39 39.39,521.98 39.17,527.62 39.04,533.30 39.00,539.00 39.04,544.70 39.17,550.38 39.39,556.02 39.69,561.61 40.08,567.12 40.56,572.54 41.12,577.86 41.76,583.04 42.50,588.08 43.32,592.96 44.23,597.65 45.22,602.15 46.30,606.42 47.47,610.46 48.72,614.24 50.06,617.75 51.48,620.96 53.00,623.87 54.60,626.45 56.28,628.68 58.05,630.55 59.91,632.03 61.85,633.11 63.88,633.78 66.00,634.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="66.00,634.00 56.58,627.97 55.53,637.92" fill="#58d5c4"/>
+<text x="72" y="537" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#58d5c4">L3</text>
+<text x="126" y="537" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#eef2f7">地道 Python</text>
+<text x="355" y="540" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="18" fill="#a9b5c7">能写可组合、易读的代码</text>
+<rect x="72" y="580" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="86" y="592" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">13</text>
+<text x="117" y="590" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">推导式与迭代器</text>
+<text x="86" y="625" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">推导式 · 迭代协议</text>
+<text x="86" y="651" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">__iter__ · __next__</text>
+<polyline points="301.00,634.00 317.00,634.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="317.00,634.00 307.00,629.00 307.00,639.00" fill="#58d5c4"/>
+<rect x="322" y="580" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="336" y="592" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">14</text>
+<text x="367" y="590" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">生成器</text>
+<text x="336" y="625" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">惰性计算 · 生成器管道</text>
+<text x="336" y="651" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">yield · yield from</text>
+<polyline points="551.00,634.00 567.00,634.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="567.00,634.00 557.00,629.00 557.00,639.00" fill="#58d5c4"/>
+<rect x="572" y="580" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="586" y="592" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">15</text>
+<text x="617" y="590" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">闭包与装饰器</text>
+<text x="586" y="625" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">自由变量 · 函数包装</text>
+<text x="586" y="651" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">@decorator · wraps</text>
+<polyline points="801.00,634.00 817.00,634.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="817.00,634.00 807.00,629.00 807.00,639.00" fill="#58d5c4"/>
+<rect x="822" y="580" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="836" y="592" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">16</text>
+<text x="867" y="590" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">函数与迭代工具</text>
+<text x="836" y="625" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">高阶函数 · 组合与分组</text>
+<text x="836" y="651" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">functools · itertools</text>
+<polyline points="1051.00,634.00 1067.00,634.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1067.00,634.00 1057.00,629.00 1057.00,639.00" fill="#58d5c4"/>
+<rect x="1072" y="580" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1086" y="592" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">17</text>
+<text x="1117" y="590" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">类型与数据建模</text>
+<text x="1086" y="625" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">类型注解 · 枚举 · 协议</text>
+<text x="1086" y="651" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">typing · enum · Protocol</text>
+<polyline points="1301.00,634.00 1317.00,634.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1317.00,634.00 1307.00,629.00 1307.00,639.00" fill="#58d5c4"/>
+<rect x="1322" y="580" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1336" y="592" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">18</text>
+<text x="1367" y="590" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">上下文管理器</text>
+<text x="1336" y="625" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">资源获取与释放</text>
+<text x="1336" y="651" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">contextlib · __enter__</text>
+<polyline points="1552.00,634.00 1554.12,634.22 1556.15,634.89 1558.09,635.97 1559.95,637.45 1561.72,639.32 1563.40,641.55 1565.00,644.13 1566.52,647.04 1567.94,650.25 1569.28,653.76 1570.53,657.54 1571.70,661.58 1572.78,665.85 1573.77,670.35 1574.68,675.04 1575.50,679.92 1576.24,684.96 1576.88,690.14 1577.44,695.46 1577.92,700.88 1578.31,706.39 1578.61,711.98 1578.83,717.62 1578.96,723.30 1579.00,729.00 1578.96,734.70 1578.83,740.38 1578.61,746.02 1578.31,751.61 1577.92,757.12 1577.44,762.54 1576.88,767.86 1576.24,773.04 1575.50,778.08 1574.68,782.96 1573.77,787.65 1572.78,792.15 1571.70,796.42 1570.53,800.46 1569.28,804.24 1567.94,807.75 1566.52,810.96 1565.00,813.87 1563.40,816.45 1561.72,818.68 1559.95,820.55 1558.09,822.03 1556.15,823.11 1554.12,823.78 1552.00,824.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1552.00,824.00 1562.47,827.92 1561.42,817.97" fill="#58d5c4"/>
+<text x="72" y="727" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#58d5c4">L4</text>
+<text x="126" y="727" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#eef2f7">语言内核</text>
+<text x="355" y="730" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="18" fill="#a9b5c7">能读懂库的实现机制</text>
+<rect x="1322" y="770" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1336" y="782" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">19</text>
+<text x="1367" y="780" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">对象与魔法方法</text>
+<text x="1336" y="815" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">对象模型 · 表示与比较</text>
+<text x="1336" y="841" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">__repr__ · __eq__</text>
+<polyline points="1317.00,824.00 1301.00,824.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1301.00,824.00 1311.00,829.00 1311.00,819.00" fill="#58d5c4"/>
+<rect x="1072" y="770" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1086" y="782" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">20</text>
+<text x="1117" y="780" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">运算与属性协议</text>
+<text x="1086" y="815" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">重载运算 · 属性访问</text>
+<text x="1086" y="841" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">__add__ · __getattr__</text>
+<polyline points="1067.00,824.00 1051.00,824.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1051.00,824.00 1061.00,829.00 1061.00,819.00" fill="#58d5c4"/>
+<rect x="822" y="770" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="836" y="782" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">21</text>
+<text x="867" y="780" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">描述符与内存</text>
+<text x="836" y="815" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">属性托管 · 槽 · 弱引用</text>
+<text x="836" y="841" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">__get__ · __slots__</text>
+<polyline points="817.00,824.00 801.00,824.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="801.00,824.00 811.00,829.00 811.00,819.00" fill="#58d5c4"/>
+<rect x="572" y="770" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="586" y="782" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">22</text>
+<text x="617" y="780" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">抽象类与元类</text>
+<text x="586" y="815" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">接口约束 · 类的创建</text>
+<text x="586" y="841" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">abc · ABC · type</text>
+<polyline points="567.00,824.00 551.00,824.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="551.00,824.00 561.00,829.00 561.00,819.00" fill="#58d5c4"/>
+<rect x="322" y="770" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="336" y="782" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">23</text>
+<text x="367" y="780" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">导入机制</text>
+<text x="336" y="815" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">模块缓存 · 动态加载</text>
+<text x="336" y="841" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">sys.modules · importlib</text>
+<polyline points="317.00,824.00 301.00,824.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="301.00,824.00 311.00,829.00 311.00,819.00" fill="#58d5c4"/>
+<rect x="72" y="770" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="86" y="782" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">24</text>
+<text x="117" y="780" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">内省与调试</text>
+<text x="86" y="815" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">运行时探查 · 字节码</text>
+<text x="86" y="841" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">inspect · dis · pdb</text>
+<polyline points="66.00,824.00 63.88,824.22 61.85,824.89 59.91,825.97 58.05,827.45 56.28,829.32 54.60,831.55 53.00,834.13 51.48,837.04 50.06,840.25 48.72,843.76 47.47,847.54 46.30,851.58 45.22,855.85 44.23,860.35 43.32,865.04 42.50,869.92 41.76,874.96 41.12,880.14 40.56,885.46 40.08,890.88 39.69,896.39 39.39,901.98 39.17,907.62 39.04,913.30 39.00,919.00 39.04,924.70 39.17,930.38 39.39,936.02 39.69,941.61 40.08,947.12 40.56,952.54 41.12,957.86 41.76,963.04 42.50,968.08 43.32,972.96 44.23,977.65 45.22,982.15 46.30,986.42 47.47,990.46 48.72,994.24 50.06,997.75 51.48,1000.96 53.00,1003.87 54.60,1006.45 56.28,1008.68 58.05,1010.55 59.91,1012.03 61.85,1013.11 63.88,1013.78 66.00,1014.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="66.00,1014.00 56.58,1007.97 55.53,1017.92" fill="#58d5c4"/>
+<text x="72" y="917" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#58d5c4">L5</text>
+<text x="126" y="917" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#eef2f7">标准库主干</text>
+<text x="355" y="920" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="18" fill="#a9b5c7">遇到需求知道去哪里找</text>
+<rect x="72" y="960" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="86" y="972" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">25</text>
+<text x="117" y="970" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">文本、数据与时间</text>
+<text x="86" y="1005" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">正则 · 日期 · 配置文件</text>
+<text x="86" y="1031" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">re · datetime · csv</text>
+<polyline points="301.00,1014.00 317.00,1014.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="317.00,1014.00 307.00,1009.00 307.00,1019.00" fill="#58d5c4"/>
+<rect x="322" y="960" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="336" y="972" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">26</text>
+<text x="367" y="970" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">集合与算法</text>
+<text x="336" y="1005" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">容器增强 · 堆 · 二分</text>
+<text x="336" y="1031" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">collections · heapq</text>
+<polyline points="551.00,1014.00 567.00,1014.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="567.00,1014.00 557.00,1009.00 557.00,1019.00" fill="#58d5c4"/>
+<rect x="572" y="960" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="586" y="972" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">27</text>
+<text x="617" y="970" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">网络与 Web</text>
+<text x="586" y="1005" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">HTTP · 套接字 · 解析</text>
+<text x="586" y="1031" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">urllib · socket</text>
+<polyline points="801.00,1014.00 817.00,1014.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="817.00,1014.00 807.00,1009.00 807.00,1019.00" fill="#58d5c4"/>
+<rect x="822" y="960" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="836" y="972" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">28</text>
+<text x="867" y="970" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">系统与子进程</text>
+<text x="836" y="1005" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">环境 · 进程 · 外部命令</text>
+<text x="836" y="1031" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">os · sys · subprocess</text>
+<polyline points="1051.00,1014.00 1067.00,1014.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1067.00,1014.00 1057.00,1009.00 1057.00,1019.00" fill="#58d5c4"/>
+<rect x="1072" y="960" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1086" y="972" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">29</text>
+<text x="1117" y="970" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">测试与性能</text>
+<text x="1086" y="1005" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">测试 · 断言 · 性能剖析</text>
+<text x="1086" y="1031" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">unittest · timeit</text>
+<polyline points="1301.00,1014.00 1317.00,1014.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1317.00,1014.00 1307.00,1009.00 1307.00,1019.00" fill="#58d5c4"/>
+<rect x="1322" y="960" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1336" y="972" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">30</text>
+<text x="1367" y="970" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">数据库</text>
+<text x="1336" y="1005" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">SQL · 本地持久化</text>
+<text x="1336" y="1031" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">sqlite3</text>
+<polyline points="1552.00,1014.00 1554.12,1014.22 1556.15,1014.89 1558.09,1015.97 1559.95,1017.45 1561.72,1019.32 1563.40,1021.55 1565.00,1024.13 1566.52,1027.04 1567.94,1030.25 1569.28,1033.76 1570.53,1037.54 1571.70,1041.58 1572.78,1045.85 1573.77,1050.35 1574.68,1055.04 1575.50,1059.92 1576.24,1064.96 1576.88,1070.14 1577.44,1075.46 1577.92,1080.88 1578.31,1086.39 1578.61,1091.98 1578.83,1097.62 1578.96,1103.30 1579.00,1109.00 1578.96,1114.70 1578.83,1120.38 1578.61,1126.02 1578.31,1131.61 1577.92,1137.12 1577.44,1142.54 1576.88,1147.86 1576.24,1153.04 1575.50,1158.08 1574.68,1162.96 1573.77,1167.65 1572.78,1172.15 1571.70,1176.42 1570.53,1180.46 1569.28,1184.24 1567.94,1187.75 1566.52,1190.96 1565.00,1193.87 1563.40,1196.45 1561.72,1198.68 1559.95,1200.55 1558.09,1202.03 1556.15,1203.11 1554.12,1203.78 1552.00,1204.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1552.00,1204.00 1562.47,1207.92 1561.42,1197.97" fill="#58d5c4"/>
+<text x="72" y="1107" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#58d5c4">L6</text>
+<text x="126" y="1107" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#eef2f7">并发与异步</text>
+<text x="355" y="1110" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="18" fill="#a9b5c7">能按任务选择并发模型</text>
+<rect x="1322" y="1150" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1336" y="1162" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">31</text>
+<text x="1367" y="1160" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">并发模型选型</text>
+<text x="1336" y="1195" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">CPU 密集 · IO 密集</text>
+<text x="1336" y="1221" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">线程 · 进程 · 协程 · GIL</text>
+<polyline points="1317.00,1204.00 1301.00,1204.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1301.00,1204.00 1311.00,1209.00 1311.00,1199.00" fill="#58d5c4"/>
+<rect x="1072" y="1150" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1086" y="1162" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">32</text>
+<text x="1117" y="1160" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">线程与进程</text>
+<text x="1086" y="1195" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">并行任务 · 进程间通信</text>
+<text x="1086" y="1221" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">threading · multiprocessing</text>
+<polyline points="1067.00,1204.00 1051.00,1204.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1051.00,1204.00 1061.00,1209.00 1061.00,1199.00" fill="#58d5c4"/>
+<rect x="822" y="1150" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="836" y="1162" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">33</text>
+<text x="867" y="1160" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">任务池</text>
+<text x="836" y="1195" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">统一调度 · Future</text>
+<text x="836" y="1221" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">concurrent.futures</text>
+<polyline points="817.00,1204.00 801.00,1204.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="801.00,1204.00 811.00,1209.00 811.00,1199.00" fill="#58d5c4"/>
+<rect x="572" y="1150" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="586" y="1162" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">34</text>
+<text x="617" y="1160" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">异步 IO</text>
+<text x="586" y="1195" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">事件循环 · 任务 · 取消</text>
+<text x="586" y="1221" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">asyncio · async / await</text>
+<polyline points="567.00,1204.00 551.00,1204.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="551.00,1204.00 561.00,1209.00 561.00,1199.00" fill="#58d5c4"/>
+<rect x="322" y="1150" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="336" y="1162" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">35</text>
+<text x="367" y="1160" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">异步生态与同步</text>
+<text x="336" y="1195" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">异步 HTTP · 锁 · 信号量</text>
+<text x="336" y="1221" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">httpx · Lock · Semaphore</text>
+<polyline points="317.00,1204.00 301.00,1204.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="301.00,1204.00 311.00,1209.00 311.00,1199.00" fill="#58d5c4"/>
+<rect x="72" y="1150" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="86" y="1162" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">36</text>
+<text x="117" y="1160" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">优雅退出</text>
+<text x="86" y="1195" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">信号处理 · 资源清理</text>
+<text x="86" y="1221" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">signal · atexit</text>
+<polyline points="66.00,1204.00 63.88,1204.22 61.85,1204.89 59.91,1205.97 58.05,1207.45 56.28,1209.32 54.60,1211.55 53.00,1214.13 51.48,1217.04 50.06,1220.25 48.72,1223.76 47.47,1227.54 46.30,1231.58 45.22,1235.85 44.23,1240.35 43.32,1245.04 42.50,1249.92 41.76,1254.96 41.12,1260.14 40.56,1265.46 40.08,1270.88 39.69,1276.39 39.39,1281.98 39.17,1287.62 39.04,1293.30 39.00,1299.00 39.04,1304.70 39.17,1310.38 39.39,1316.02 39.69,1321.61 40.08,1327.12 40.56,1332.54 41.12,1337.86 41.76,1343.04 42.50,1348.08 43.32,1352.96 44.23,1357.65 45.22,1362.15 46.30,1366.42 47.47,1370.46 48.72,1374.24 50.06,1377.75 51.48,1380.96 53.00,1383.87 54.60,1386.45 56.28,1388.68 58.05,1390.55 59.91,1392.03 61.85,1393.11 63.88,1393.78 66.00,1394.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="66.00,1394.00 56.58,1387.97 55.53,1397.92" fill="#58d5c4"/>
+<text x="72" y="1297" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#58d5c4">L7</text>
+<text x="126" y="1297" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="24" fill="#eef2f7">工程化与生态</text>
+<text x="355" y="1300" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="18" fill="#a9b5c7">能独立交付可维护项目</text>
+<rect x="72" y="1340" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="86" y="1352" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">37</text>
+<text x="117" y="1350" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">项目与依赖管理</text>
+<text x="86" y="1385" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">目录布局 · 锁文件</text>
+<text x="86" y="1411" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">src · pyproject · uv</text>
+<polyline points="301.00,1394.00 317.00,1394.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="317.00,1394.00 307.00,1389.00 307.00,1399.00" fill="#58d5c4"/>
+<rect x="322" y="1340" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="336" y="1352" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">38</text>
+<text x="367" y="1350" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">代码质量</text>
+<text x="336" y="1385" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">格式化 · 检查 · 测试</text>
+<text x="336" y="1411" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">ruff · mypy · pytest</text>
+<polyline points="551.00,1394.00 567.00,1394.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="567.00,1394.00 557.00,1389.00 557.00,1399.00" fill="#58d5c4"/>
+<rect x="572" y="1340" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="586" y="1352" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">39</text>
+<text x="617" y="1350" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">日志与配置</text>
+<text x="586" y="1385" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">日志记录 · 环境配置</text>
+<text x="586" y="1411" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">logging · os.environ</text>
+<polyline points="801.00,1394.00 817.00,1394.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="817.00,1394.00 807.00,1389.00 807.00,1399.00" fill="#58d5c4"/>
+<rect x="822" y="1340" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="836" y="1352" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">40</text>
+<text x="867" y="1350" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">命令行与发布</text>
+<text x="836" y="1385" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">CLI · 构建 · 包分发</text>
+<text x="836" y="1411" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">argparse · wheel · build</text>
+<polyline points="1051.00,1394.00 1067.00,1394.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1067.00,1394.00 1057.00,1389.00 1057.00,1399.00" fill="#58d5c4"/>
+<rect x="1072" y="1340" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1086" y="1352" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">41</text>
+<text x="1117" y="1350" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">扩展与性能边界</text>
+<text x="1086" y="1385" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">调用原生库 · 扩展接口</text>
+<text x="1086" y="1411" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">ctypes · Cython · cffi</text>
+<polyline points="1301.00,1394.00 1317.00,1394.00" fill="none" stroke="#58d5c4" stroke-width="3" stroke-linejoin="round"/>
+<polygon points="1317.00,1394.00 1307.00,1389.00 1307.00,1399.00" fill="#58d5c4"/>
+<rect x="1322" y="1340" width="224" height="108" rx="10" fill="#1b2638" stroke="#3a4a60"/>
+<text x="1336" y="1352" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#58d5c4">42</text>
+<text x="1367" y="1350" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="21" fill="#eef2f7">选择一条业务主线</text>
+<text x="1336" y="1385" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">Web / 数据 / Agent / 测试</text>
+<text x="1336" y="1411" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" fill="#a9b5c7">做一个可运行的完整项目</text>
+<rect x="72" y="1500" width="1474" height="1" rx="0" fill="#3a4a60" stroke="none"/>
+<text x="72" y="1516" dominant-baseline="text-before-edge" font-family="Arial Unicode MS, PingFang SC, Microsoft YaHei, sans-serif" font-size="17" fill="#a9b5c7">阅读方式：奇数行从左到右，偶数行从右到左。详细知识点见下方 L1–L7；这是建议学习顺序，可结合项目回看。</text>
+</svg>

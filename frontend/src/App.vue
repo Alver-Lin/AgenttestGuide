@@ -34,6 +34,7 @@ import {
   Upload as ImportIcon,
   Moon,
   Sun,
+  Bug,
 } from 'lucide-vue-next'
 import DOMPurify from 'dompurify'
 import { useFiles } from './useFiles'
@@ -52,9 +53,11 @@ import { locateAnchor, readSelectionAnchor, selectionRect } from './annotations'
 import CommentsPanel from './CommentsPanel.vue'
 import BookmarksPanel from './BookmarksPanel.vue'
 import ImportDialog from './ImportDialog.vue'
+import SpiderOverlay from './SpiderOverlay.vue'
 import type { Note, TextAnchor } from './types'
 
 const THEME_KEY = 'agenttestguide-theme'
+const SPIDER_KEY = 'agenttestguide-spider'
 
 function readStoredTheme(): boolean {
   const stored = localStorage.getItem(THEME_KEY)
@@ -64,6 +67,7 @@ function readStoredTheme(): boolean {
 }
 
 const isDark = ref(readStoredTheme())
+const spiderEnabled = ref(localStorage.getItem(SPIDER_KEY) === '1')
 const theme = computed(() => ({
   algorithm: isDark.value ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
   token: {
@@ -86,6 +90,11 @@ function applyTheme(dark: boolean) {
 
 function toggleTheme() {
   isDark.value = !isDark.value
+}
+
+function toggleSpider() {
+  spiderEnabled.value = !spiderEnabled.value
+  localStorage.setItem(SPIDER_KEY, spiderEnabled.value ? '1' : '0')
 }
 
 watch(isDark, applyTheme, { immediate: true })
@@ -999,6 +1008,16 @@ onBeforeUnmount(() => {
             <span v-else class="path-file">文件</span>
           </div>
           <div class="document-header-actions">
+            <a-tooltip :title="spiderEnabled ? '关闭蜘蛛' : '打开蜘蛛'"
+              ><button
+                class="icon-button spider-toggle"
+                :class="{ active: spiderEnabled }"
+                :aria-label="spiderEnabled ? '关闭蜘蛛' : '打开蜘蛛'"
+                :aria-pressed="spiderEnabled"
+                @click="toggleSpider"
+              >
+                <Bug :size="17" /></button
+            ></a-tooltip>
             <a-tooltip :title="isDark ? '浅色模式' : '深色模式'"
               ><button
                 class="icon-button theme-toggle"
@@ -1330,6 +1349,7 @@ onBeforeUnmount(() => {
           </div>
         </template>
       </main>
+      <SpiderOverlay :active="spiderEnabled" :dark="isDark" />
       <ImportDialog
         v-model:open="importOpen"
         :folders="folders"
