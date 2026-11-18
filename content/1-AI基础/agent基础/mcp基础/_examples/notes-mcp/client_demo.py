@@ -85,7 +85,8 @@ async def verify(root: Path) -> None:
 async def main() -> None:
     with TemporaryDirectory(prefix="mcp-notes-demo-") as directory:
         root = Path(directory)
-        for source in (BASE / "notes").glob("*.md"):
+        for filename in ("python.md", "mcp.md"):
+            source = BASE / "notes" / filename
             shutil.copy2(source, root / source.name)
         await verify(root)
 

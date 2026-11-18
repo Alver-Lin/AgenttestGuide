@@ -1,3 +1,5 @@
+> **关键词**：MCP Server · FastMCP · ClientSession · stdio · search_notes · create_note · structuredContent · isError · NOTES_ROOT · Tools、Resources、Prompts
+
 # MCP 实战：用 Python 搭建本地 Markdown 笔记服务
 
 前置阅读：[什么是 MCP](./什么是mcp.md)。本篇从实际需求出发，把 Python 文件操作封装成 MCP 工具，再由独立客户端通过协议调用。
@@ -338,7 +340,8 @@ async def verify(root: Path) -> None:
 async def main() -> None:
     with TemporaryDirectory(prefix="mcp-notes-demo-") as directory:
         root = Path(directory)
-        for source in (BASE / "notes").glob("*.md"):
+        for filename in ("python.md", "mcp.md"):
+            source = BASE / "notes" / filename
             shutil.copy2(source, root / source.name)
         await verify(root)
 

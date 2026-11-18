@@ -58,12 +58,30 @@ import type { Note, TextAnchor } from './types'
 
 const THEME_KEY = 'agenttestguide-theme'
 const SPIDER_KEY = 'agenttestguide-spider'
+const EXPANDED_KEY = 'agenttestguide-tree-expanded'
 
 function readStoredTheme(): boolean {
   const stored = localStorage.getItem(THEME_KEY)
   if (stored === 'dark') return true
   if (stored === 'light') return false
   return window.matchMedia('(prefers-color-scheme: dark)').matches
+}
+
+function readStoredExpandedKeys(): string[] {
+  try {
+    const raw = localStorage.getItem(EXPANDED_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw) as unknown
+    if (!Array.isArray(parsed)) return []
+    return parsed.map(String).filter((key) => key.startsWith('folder:'))
+  } catch {
+    return []
+  }
+}
+
+function persistExpandedKeys(keys: (string | number)[]) {
+  const folderKeys = keys.map(String).filter((key) => key.startsWith('folder:'))
+  localStorage.setItem(EXPANDED_KEY, JSON.stringify(folderKeys))
 }
 
 const isDark = ref(readStoredTheme())
@@ -144,6 +162,13 @@ const selectedFileId = ref('welcome')
 const selectedFolderId = ref('')
 const selectedKeys = ref<string[]>([])
 const expandedKeys = ref<(string | number)[]>([])
+watch(
+  expandedKeys,
+  (keys) => {
+    persistExpandedKeys(keys)
+  },
+  { deep: true },
+)
 const sidebarHidden = ref(false)
 const mobileSidebar = ref(false)
 const editing = ref(false)
@@ -368,7 +393,9 @@ const dialogTitle = computed(() => {
 async function initialize() {
   await load()
   if (loadError.value) return
-  expandedKeys.value = folders.value.map((folder) => `folder:${folder.id}`)
+  // Restore last expand/collapse; default is all collapsed (empty list).
+  const valid = new Set(folders.value.map((folder) => `folder:${folder.id}`))
+  expandedKeys.value = readStoredExpandedKeys().filter((key) => valid.has(key))
   const first = activeFiles.value.find((file) => file.id === 'welcome') || activeFiles.value[0]
   if (first) selectNode([`file:${first.id}`], false)
   else if (folders.value[0]) selectNode([`folder:${folders.value[0].id}`], false)
